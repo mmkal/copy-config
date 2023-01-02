@@ -4,8 +4,8 @@ import * as cp from 'child_process'
 import * as realFs from 'fs'
 import * as glob from 'glob'
 import * as path from 'path'
+import type {Config} from './config'
 import {defaultConfig} from './config'
-import type {Config} from './types'
 
 type Logger = Pick<Console, 'info'>
 export const run = async ({
@@ -47,20 +47,24 @@ export const run = async ({
   config.rules
     .slice()
     .reverse()
-    .forEach(c => {
-      const files = glob.sync(c.pattern, {cwd: tempRepoDir})
+    .forEach(rule => {
+      const files = glob.sync(rule.pattern, {cwd: tempRepoDir})
       files.forEach(relPath => {
         const absPath = path.join(cwd, relPath)
         if (handled.has(absPath)) {
-          logger.info(`skipping ${absPath} for pattern ${c.pattern}, already handled`)
+          logger.info(`skipping ${absPath} for pattern ${rule.pattern}, already handled`)
           return
         }
 
         const remoteContent = fs.readFileSync(path.join(tempRepoDir, relPath)).toString()
         const localContent = fs.existsSync(absPath) ? fs.readFileSync(absPath).toString() : undefined
-        const newContent = c.merge({path: absPath, remoteContent, localContent})
+        const newContent = rule.merge({
+          remoteContent,
+          localContent,
+          meta: {filepath: relPath, localCwd: cwd, remoteCwd: tempRepoDir},
+        })
         if (newContent) {
-          logger.info(`writing ${absPath} after matching pattern ${c.pattern}`)
+          logger.info(`writing ${absPath} after matching pattern ${rule.pattern}`)
           fs.mkdirSync(path.dirname(absPath), {recursive: true})
           fs.writeFileSync(absPath, newContent)
         }
@@ -68,4 +72,7 @@ export const run = async ({
         handled.add(absPath)
       })
     })
+
+  // todo: add `--purge` flag to search for config files on the local repo, and delete them if they don't exist on the remote?
+  // todo: add way of checking git history so we don't override newer stuff with older
 }

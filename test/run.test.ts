@@ -110,11 +110,20 @@ test('run', async () => {
     }
     ",
       "package.json": "{
+      \\"name\\": \\"run\\",
+      \\"version\\": \\"0.0.0\\",
       \\"scripts\\": {
         \\"eslint\\": \\"eslint --ext '.ts,.js,.md'\\",
         \\"lint\\": \\"tsc && eslint .\\",
         \\"build\\": \\"tsc -p tsconfig.lib.json\\",
         \\"test\\": \\"jest\\"
+      },
+      \\"files\\": [
+        \\"dist\\",
+        \\"*.md\\"
+      ],
+      \\"np\\": {
+        \\"cleanup\\": false
       },
       \\"devDependencies\\": {
         \\"typescript\\": \\"4.8.2\\",

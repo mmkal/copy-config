@@ -1,6 +1,4 @@
-// codegen:start {preset: barrel}
-export * from './bin'
+export type {MergeStrategy} from './merge'
+export * as mergeStrategies from './merge'
 export * from './config'
 export * from './run'
-export * from './types'
-// codegen:end
