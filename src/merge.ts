@@ -61,6 +61,7 @@ export const fairlySensiblePackageJson: MergeStrategy = ({remoteContent, localCo
     np: remotePkg.np,
     devDependencies: lodash.pick(remoteDevDeps, [
       'typescript',
+      'np',
       ...Object.keys(remoteDevDeps).filter(k => k.includes('jest')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('ava')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('mocha')),
