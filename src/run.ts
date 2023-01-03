@@ -3,6 +3,7 @@ import * as assert from 'assert'
 import * as cp from 'child_process'
 import * as realFs from 'fs'
 import * as glob from 'glob'
+import {intersection} from 'lodash'
 import * as path from 'path'
 import type {Config} from './config'
 import {defaultConfig} from './config'
@@ -19,6 +20,8 @@ export const run = async ({
       '--repo': String,
       '--config': String,
       '--ref': String,
+      '--filter': String,
+      '--purge': Boolean,
     },
     {argv},
   )
@@ -49,7 +52,8 @@ export const run = async ({
     .reverse()
     .forEach(rule => {
       const files = glob.sync(rule.pattern, {cwd: tempRepoDir})
-      files.forEach(relPath => {
+      const filtered = args['--filter'] ? intersection(files, glob.sync(args['--filter'], {cwd: tempRepoDir})) : files
+      filtered.forEach(relPath => {
         const absPath = path.join(cwd, relPath)
         if (handled.has(absPath)) {
           logger.info(`skipping ${absPath} for pattern ${rule.pattern}, already handled`)
@@ -73,6 +77,21 @@ export const run = async ({
       })
     })
 
-  // todo: add `--purge` flag to search for config files on the local repo, and delete them if they don't exist on the remote?
-  // todo: add way of checking git history so we don't override newer stuff with older
+  if (args['--purge']) {
+    config.rules
+      .slice()
+      .reverse()
+      .forEach(rule => {
+        const localFiles = glob.sync(rule.pattern, {cwd})
+        const filtered = args['--filter'] ? intersection(localFiles, glob.sync(args['--filter'], {cwd})) : localFiles
+        filtered.forEach(relPath => {
+          const remoteFile = path.join(tempRepoDir, relPath)
+          const absPath = path.join(cwd, relPath)
+          if (!fs.existsSync(remoteFile)) {
+            logger.info(`Removing ${relPath} because it doesn't exist in ${repo}`)
+            fs.unlinkSync(absPath)
+          }
+        })
+      })
+  }
 }

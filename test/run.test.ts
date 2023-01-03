@@ -206,3 +206,77 @@ test('run', async () => {
     ]
   `)
 })
+
+test('filter', async () => {
+  const syncer = jestFixture({targetState: {}})
+  syncer.sync()
+  const log = jest.fn()
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchObject({
+    'tsconfig.json': expect.any(String),
+    'tsconfig.lib.json': expect.any(String),
+  })
+})
+
+test('purge', async () => {
+  const syncer = jestFixture({
+    targetState: {
+      'some-local-config.json': '{"foo": "bar"}',
+    },
+  })
+  syncer.sync()
+  expect(syncer.read()).toMatchObject({
+    'some-local-config.json': expect.any(String),
+  })
+  const log = jest.fn()
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--purge'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).not.toMatchObject({
+    'some-local-config.json': expect.any(String),
+  })
+  expect(syncer.read()).toMatchObject({
+    'tsconfig.json': expect.any(String),
+  })
+})
+
+test('purge + filter', async () => {
+  const syncer = jestFixture({
+    targetState: {
+      // we're going to filter to tsconfigs only, and purge, so this will be removed
+      'tsconfig.local.json': '{}',
+      // but this isn't included in the filter so won't be removed
+      'some-local-config.json': '{"foo": "bar"}',
+    },
+  })
+  syncer.sync()
+  expect(syncer.read()).toMatchObject({
+    'some-local-config.json': expect.any(String),
+    'tsconfig.local.json': expect.any(String),
+  })
+  const log = jest.fn()
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json', '--purge'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchObject({
+    'some-local-config.json': expect.any(String),
+    'tsconfig.json': expect.any(String),
+  })
+  expect(syncer.read()).not.toMatchObject({
+    'tsconfig.local.json': expect.any(String),
+  })
+})
