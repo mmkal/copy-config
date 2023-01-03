@@ -192,16 +192,16 @@ test('run', async () => {
         "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.gitignore after matching pattern .gitignore",
       ],
       Array [
-        "skipping /workspaces/copy-config/test/fixtures/run.test.ts/run/package.json for pattern {.,.vscode}/*.json, already handled",
+        "skipping /workspaces/copy-config/test/fixtures/run.test.ts/run/package.json for pattern {.,.vscode,.devcontainer}/*.json, already handled",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.json after matching pattern {.,.vscode}/*.json",
+        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.lib.json after matching pattern {.,.vscode}/*.json",
+        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.vscode/settings.json after matching pattern {.,.vscode}/*.json",
+        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.vscode/settings.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
     ]
   `)

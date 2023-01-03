@@ -12,7 +12,7 @@ export interface Config {
 export const defaultConfig: Config = {
   rules: [
     {
-      pattern: '{.,.vscode}/*.json',
+      pattern: '{.,.vscode,.devcontainer}/*.json',
       merge: mergeStrategies.jsonRemoteDefaults,
     },
     {
