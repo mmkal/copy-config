@@ -3,18 +3,36 @@ import * as lodash from 'lodash'
 import * as path from 'path'
 import type {PackageJson} from 'type-fest'
 
-export type MergeStrategy = (params: {
-  remoteContent: string
-  localContent: string | undefined
-  meta: {filepath: string; localCwd: string; remoteCwd: string}
-}) => string
-
-export const jsonRemoteDefaults: MergeStrategy = ({remoteContent, localContent}) => {
-  const remote = JSON.parse(remoteContent)
-  const local = JSON.parse(localContent || '{}')
-  const updated = lodash.defaultsDeep(local, remote)
-  return JSON.stringify(updated, null, 2)
+type Meta = {
+  filepath: string
+  localCwd: string
+  remoteCwd: string
 }
+
+export type MergeStrategy = (params: {remoteContent: string; localContent: string | undefined; meta: Meta}) => string
+
+const jsonMergeStrategy = <T = any>(
+  fn: (params: {remoteJson: T; localJson: T; meta: Meta}) => T,
+): MergeStrategy & {jsonMergeStrategy: typeof fn} => {
+  const mergeStrategy: MergeStrategy = ({remoteContent, localContent, meta}) => {
+    const remoteJson = JSON.parse(remoteContent)
+    const localJson = JSON.parse(localContent || '{}')
+    const updated = fn({remoteJson, localJson, meta})
+    return JSON.stringify(updated, null, 2)
+  }
+
+  return Object.assign(mergeStrategy, {jsonMergeStrategy: fn})
+}
+
+export const jsonRemoteDefaults = jsonMergeStrategy(({remoteJson, localJson}) =>
+  lodash.defaultsDeep(localJson, remoteJson),
+)
+
+export const jsonAggressiveMerge = jsonMergeStrategy(({remoteJson, localJson}) =>
+  lodash.merge({}, remoteJson, localJson),
+)
+
+export const replace: MergeStrategy = ({remoteContent}) => remoteContent
 
 export const concat: MergeStrategy = ({remoteContent, localContent}) => {
   const remoteLines = remoteContent.split('\n')
