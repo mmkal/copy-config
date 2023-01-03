@@ -64,7 +64,7 @@ export const run = async ({
           meta: {filepath: relPath, localCwd: cwd, remoteCwd: tempRepoDir},
         })
         if (newContent) {
-          logger.info(`writing ${absPath} after matching pattern ${rule.pattern}`)
+          logger.info(`writing ${relPath} after matching pattern ${rule.pattern}`)
           fs.mkdirSync(path.dirname(absPath), {recursive: true})
           fs.writeFileSync(absPath, newContent)
         }

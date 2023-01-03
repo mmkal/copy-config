@@ -174,34 +174,34 @@ test('run', async () => {
   expect(log.mock.calls).toMatchInlineSnapshot(`
     Array [
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/package.json after matching pattern ./package.json",
+        "writing ./package.json after matching pattern ./package.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
+        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/jest.config.js after matching pattern ./*.{js,cjs,ts}",
+        "writing ./jest.config.js after matching pattern ./*.{js,cjs,ts}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.eslintrc.cjs after matching pattern ./.*.{js,cjs}",
+        "writing ./.eslintrc.cjs after matching pattern ./.*.{js,cjs}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.prettierrc.js after matching pattern ./.*.{js,cjs}",
+        "writing ./.prettierrc.js after matching pattern ./.*.{js,cjs}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.gitignore after matching pattern .gitignore",
+        "writing .gitignore after matching pattern .gitignore",
       ],
       Array [
         "skipping /workspaces/copy-config/test/fixtures/run.test.ts/run/package.json for pattern {.,.vscode,.devcontainer}/*.json, already handled",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing ./tsconfig.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing ./tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.vscode/settings.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing .vscode/settings.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
     ]
   `)
