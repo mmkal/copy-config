@@ -25,12 +25,12 @@ const jsonMergeStrategy = <T = any>(
 }
 
 export const jsonRemoteDefaults = jsonMergeStrategy(({remoteJson, localJson}) =>
-  lodash.defaultsDeep(localJson, remoteJson),
+  {return lodash.defaultsDeep(localJson, remoteJson)}
 )
 
-export const jsonAggressiveMerge = jsonMergeStrategy(({remoteJson, localJson}) =>
-  lodash.merge({}, remoteJson, localJson),
-)
+export const jsonAggressiveMerge = jsonMergeStrategy(({remoteJson, localJson}) => {
+  return lodash.merge({}, localJson, remoteJson)
+})
 
 export const replace: MergeStrategy = ({remoteContent}) => remoteContent
 
