@@ -47,9 +47,11 @@ If you only want to copy over certain kinds of file, you can use `--filter` to n
 
 Use this to remove all config files found locally that aren't found on the remote. This is a destructive option, so use it carefully.
 
-### `--aggressive` (_experimental_)
+### `--aggressive` (_experimental, will probably be changed to `--strategy aggressive`_)
 
 Instead of the default merge strategies, use more aggressive equivalents. Merge json files, biasing to the remote content instead of local, and replace other files using the remote content directly. Like `--purge`, this is a potentially destructive command since it doesn't respect your local filesystem, so use carefully.
+
+>Future: This will probably become a `--strategy` option, to allow for `--strategy aggressive-if-remote-newer` or some such. That would do a `git blame` on each file, and aggressively update from the remote if the remote file was more recently updated, maybe.
 
 ### `--config`
 
