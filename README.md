@@ -6,7 +6,11 @@ Copies another repo's configuration
 
 Save hours setting up new repos, or months living without proper DX on existing ones, by borrowing the configuration from another project.
 
-There are lots of zero-config or low-config tools that come and go - [tsdx](https://npmjs.com/package/tsdx), [microbundle](https://www.npmjs.com/package/microbundle), [heft](https://rushstack.io/pages/heft/overview). Most are pretty well documented, and some are pretty good at staying up to date with their supported typescript, jest, eslint versions. But there's a big cost in investing in these magical options, and you might find yourself spending hours learning the configurations of those tools, the quirks of their implementations, and their limitations. This tool offers a simpler approach - it's really just the equivalent of you poking around another project, and copy-pasting the bits of config that make it work. But it takes seconds, not hours. And it works with all versions of all toolchains, even ones that don't exist yet.
+There are lots of zero-config or low-config tools that come and go - [tsdx](https://npmjs.com/package/tsdx), [microbundle](https://www.npmjs.com/package/microbundle), [heft](https://rushstack.io/pages/heft/overview). Most are pretty well documented, and some are pretty good at staying up to date with their supported typescript, jest, eslint versions.
+
+But there's a big cost in investing in these magical options, and you might find yourself spending hours learning the configurations of those tools, the quirks of their implementations, and their limitations.
+
+This tool offers a simpler approach - it's really just the equivalent of you poking around another project, and copy-pasting the bits of config that make it work. But it takes seconds, not hours. And it works with all versions of all toolchains, even ones that don't exist yet.
 
 ## How to use
 
@@ -42,6 +46,10 @@ If you only want to copy over certain kinds of file, you can use `--filter` to n
 ### `--purge`
 
 Use this to remove all config files found locally that aren't found on the remote. This is a destructive option, so use it carefully.
+
+### `--aggressive` (_experimental_)
+
+Instead of the default merge strategies, use more aggressive equivalents. Merge json files, biasing to the remote content instead of local, and replace other files using the remote content directly. Like `--purge`, this is a potentially destructive command since it doesn't respect your local filesystem, so use carefully.
 
 ### `--config`
 
