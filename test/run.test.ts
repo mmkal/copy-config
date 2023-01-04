@@ -137,7 +137,8 @@ test('run', async () => {
         \\"eslint-plugin-mmkal\\": \\"0.0.1-2\\",
         \\"@babel/types\\": \\"7.12.11\\",
         \\"@types/babel__generator\\": \\"7.6.2\\",
-        \\"@types/babel__traverse\\": \\"7.11.0\\"
+        \\"@types/babel__traverse\\": \\"7.11.0\\",
+        \\"ts-node\\": \\"9.1.1\\"
       }
     }
     ",
@@ -181,22 +182,31 @@ test('run', async () => {
   expect(log.mock.calls).toMatchInlineSnapshot(`
     Array [
       Array [
+        "Cloning https://github.com/mmkal/eslint-plugin-codegen in /tmp/copy-config/github.com/mmkal/eslint-plugin-codegen/pX2vqe",
+      ],
+      Array [
         "writing ./package.json after matching pattern ./package.json",
       ],
       Array [
-        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
+        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml,md}",
+      ],
+      Array [
+        "writing ./.eslintrc.cjs after matching pattern ./*.{js,cjs,ts}",
+      ],
+      Array [
+        "writing ./.prettierrc.js after matching pattern ./*.{js,cjs,ts}",
       ],
       Array [
         "writing ./jest.config.js after matching pattern ./*.{js,cjs,ts}",
       ],
       Array [
-        "writing ./.eslintrc.cjs after matching pattern ./.*.{js,cjs}",
+        "skipping ./.eslintrc.cjs for pattern ./.*.{js,cjs}, already handled",
       ],
       Array [
-        "writing ./.prettierrc.js after matching pattern ./.*.{js,cjs}",
+        "skipping ./.prettierrc.js for pattern ./.*.{js,cjs}, already handled",
       ],
       Array [
-        "writing .gitignore after matching pattern .gitignore",
+        "writing .gitignore after matching pattern .{gitignore,prettierignore,eslintignore,npmignore}",
       ],
       Array [
         "skipping ./package.json for pattern {.,.vscode,.devcontainer}/*.json, already handled",

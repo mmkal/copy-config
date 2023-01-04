@@ -35,7 +35,7 @@ export const run = async ({
   const tmpParent = '/tmp/copy-config/' + repo.split('://')[1]
   fs.mkdirSync(tmpParent, {recursive: true})
   const tempDir = fs.mkdtempSync(tmpParent + '/')
-  logger.info(`Cloning trpc in ${tempDir}`)
+  logger.info(`Cloning ${repo} in ${tempDir}`)
   cp.execSync(`git clone ${repo}`, {cwd: tempDir})
   const tempRepoDir = path.join(tempDir, fs.readdirSync(tempDir)[0])
 

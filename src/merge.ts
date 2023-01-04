@@ -91,6 +91,7 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
       ...Object.keys(remoteDevDeps).filter(k => k.includes('esbuild')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('babel')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('parcel')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('ts-node')),
     ]),
   } as PackageJson
 
