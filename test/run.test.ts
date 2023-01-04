@@ -189,7 +189,7 @@ test('run', async () => {
         "writing ./.prettierrc.js after matching pattern ./.*.{js,cjs}",
       ],
       Array [
-        "writing .gitignore after matching pattern .gitignore",
+        "writing .gitignore after matching pattern .{gitignore,prettierignore,eslintignore,npmignore}",
       ],
       Array [
         "skipping ./package.json for pattern {.,.vscode,.devcontainer}/*.json, already handled",
