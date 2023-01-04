@@ -24,9 +24,9 @@ const jsonMergeStrategy = <T = any>(
   return Object.assign(mergeStrategy, {jsonMergeStrategy: fn})
 }
 
-export const jsonRemoteDefaults = jsonMergeStrategy(({remoteJson, localJson}) =>
-  {return lodash.defaultsDeep(localJson, remoteJson)}
-)
+export const jsonRemoteDefaults = jsonMergeStrategy(({remoteJson, localJson}) => {
+  return lodash.defaultsDeep(localJson, remoteJson)
+})
 
 export const jsonAggressiveMerge = jsonMergeStrategy(({remoteJson, localJson}) => {
   return lodash.merge({}, localJson, remoteJson)
@@ -55,41 +55,39 @@ export const preferLocal: MergeStrategy = ({remoteContent, localContent}) => loc
  * - Defines a default project name of the local working directory
  * - Defines a default project version of 0.0.0
  */
-export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(
-  ({remoteJson, localJson, meta}) => {
-    const remoteDevDeps = remoteJson.devDependencies || {}
+export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
+  const remoteDevDeps = remoteJson.devDependencies || {}
 
-    const remote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
+  const remote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
 
-    const trimmedDownRemote = {
-      name: path.parse(meta.localCwd).name,
-      version: '0.0.0',
-      scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
-      ...(remote.startsWith('https://') && {
-        homepage: remote.startsWith('https://') ? `${remote}#readme` : undefined,
-        repository: {
-          type: 'git',
-          url: (remote + '.git').replace(/\.git\.git$/, '.git'),
-        },
-      }),
-      files: remoteJson.files,
-      author: remoteJson.author,
-      np: remoteJson.np,
-      devDependencies: lodash.pick(remoteDevDeps, [
-        'typescript',
-        'np',
-        ...Object.keys(remoteDevDeps).filter(k => k.includes('jest')),
-        ...Object.keys(remoteDevDeps).filter(k => k.includes('ava')),
-        ...Object.keys(remoteDevDeps).filter(k => k.includes('mocha')),
-        ...Object.keys(remoteDevDeps).filter(k => k.includes('playwright')),
-        ...Object.keys(remoteDevDeps).filter(k => k.includes('eslint')),
-        ...Object.keys(remoteDevDeps).filter(k => k.includes('prettier')),
-      ]),
-    } as PackageJson
+  const trimmedDownRemote = {
+    name: path.parse(meta.localCwd).name,
+    version: '0.0.0',
+    scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
+    ...(remote.startsWith('https://') && {
+      homepage: remote.startsWith('https://') ? `${remote}#readme` : undefined,
+      repository: {
+        type: 'git',
+        url: (remote + '.git').replace(/\.git\.git$/, '.git'),
+      },
+    }),
+    files: remoteJson.files,
+    author: remoteJson.author,
+    np: remoteJson.np,
+    devDependencies: lodash.pick(remoteDevDeps, [
+      'typescript',
+      'np',
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('jest')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('ava')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('mocha')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('playwright')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('eslint')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('prettier')),
+    ]),
+  } as PackageJson
 
-    return lodash.defaultsDeep(localJson, trimmedDownRemote)
-  },
-)
+  return lodash.defaultsDeep(localJson, trimmedDownRemote)
+})
 
 export const aggressivePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
   const {name, version, remotePkg} = fairlySensiblePackageJson.jsonMergeStrategy({

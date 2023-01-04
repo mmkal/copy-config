@@ -1,5 +1,5 @@
-import * as mergeStrategies from './merge'
 import * as assert from 'assert'
+import * as mergeStrategies from './merge'
 
 export interface Rule {
   pattern: string
@@ -47,9 +47,9 @@ const aggressiveEquivalents: Array<[mergeStrategies.MergeStrategy, mergeStrategi
 ]
 
 export const aggressiveConfig: Config = {
-  rules: defaultConfig.rules.map((rule) => {
+  rules: defaultConfig.rules.map(rule => {
     const pairing = aggressiveEquivalents.find(p => p[0] === rule.merge)
     assert.ok(pairing, `There should be an aggressive equivalent for ${rule.pattern} merge strategy`)
     return {pattern: rule.pattern, merge: pairing[1]}
-  })
+  }),
 }
