@@ -174,35 +174,109 @@ test('run', async () => {
   expect(log.mock.calls).toMatchInlineSnapshot(`
     Array [
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/package.json after matching pattern ./package.json",
+        "writing ./package.json after matching pattern ./package.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
+        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/jest.config.js after matching pattern ./*.{js,cjs,ts}",
+        "writing ./jest.config.js after matching pattern ./*.{js,cjs,ts}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.eslintrc.cjs after matching pattern ./.*.{js,cjs}",
+        "writing ./.eslintrc.cjs after matching pattern ./.*.{js,cjs}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.prettierrc.js after matching pattern ./.*.{js,cjs}",
+        "writing ./.prettierrc.js after matching pattern ./.*.{js,cjs}",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.gitignore after matching pattern .gitignore",
+        "writing .gitignore after matching pattern .gitignore",
       ],
       Array [
-        "skipping /workspaces/copy-config/test/fixtures/run.test.ts/run/package.json for pattern {.,.vscode,.devcontainer}/*.json, already handled",
+        "skipping ./package.json for pattern {.,.vscode,.devcontainer}/*.json, already handled",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing ./tsconfig.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing ./tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
       Array [
-        "writing /workspaces/copy-config/test/fixtures/run.test.ts/run/.vscode/settings.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing .vscode/settings.json after matching pattern {.,.vscode,.devcontainer}/*.json",
       ],
     ]
   `)
+})
+
+test('filter', async () => {
+  const syncer = jestFixture({targetState: {}})
+  syncer.sync()
+  const log = jest.fn()
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchObject({
+    'tsconfig.json': expect.any(String),
+    'tsconfig.lib.json': expect.any(String),
+  })
+})
+
+test('purge', async () => {
+  const syncer = jestFixture({
+    targetState: {
+      'some-local-config.json': '{"foo": "bar"}',
+    },
+  })
+  syncer.sync()
+  expect(syncer.read()).toMatchObject({
+    'some-local-config.json': expect.any(String),
+  })
+  const log = jest.fn()
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--purge'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).not.toMatchObject({
+    'some-local-config.json': expect.any(String),
+  })
+  expect(syncer.read()).toMatchObject({
+    'tsconfig.json': expect.any(String),
+  })
+})
+
+test('purge + filter', async () => {
+  const syncer = jestFixture({
+    targetState: {
+      // we're going to filter to tsconfigs only, and purge, so this will be removed
+      'tsconfig.local.json': '{}',
+      // but this isn't included in the filter so won't be removed
+      'some-local-config.json': '{"foo": "bar"}',
+    },
+  })
+  syncer.sync()
+  expect(syncer.read()).toMatchObject({
+    'some-local-config.json': expect.any(String),
+    'tsconfig.local.json': expect.any(String),
+  })
+  const log = jest.fn()
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json', '--purge'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchObject({
+    'some-local-config.json': expect.any(String),
+    'tsconfig.json': expect.any(String),
+  })
+  expect(syncer.read()).not.toMatchObject({
+    'tsconfig.local.json': expect.any(String),
+  })
 })
