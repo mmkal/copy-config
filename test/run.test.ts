@@ -101,7 +101,8 @@ test('run', async () => {
         \\"typescript\\"
       ],
       \\"typescript.tsdk\\": \\"node_modules/typescript/lib\\"
-    }",
+    }
+    ",
       },
       "jest.config.js": "/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
     module.exports = {
@@ -138,7 +139,8 @@ test('run', async () => {
         \\"@types/babel__generator\\": \\"7.6.2\\",
         \\"@types/babel__traverse\\": \\"7.11.0\\"
       }
-    }",
+    }
+    ",
       "tsconfig.json": "{
       \\"compilerOptions\\": {
         \\"lib\\": [
@@ -159,7 +161,8 @@ test('run', async () => {
         \\".*.*js\\",
         \\"*.md\\"
       ]
-    }",
+    }
+    ",
       "tsconfig.lib.json": "{
       \\"extends\\": \\"./tsconfig.json\\",
       \\"compilerOptions\\": {
@@ -170,7 +173,8 @@ test('run', async () => {
       \\"include\\": [
         \\"src\\"
       ]
-    }",
+    }
+    ",
     }
   `)
 
@@ -281,5 +285,35 @@ test('purge + filter', async () => {
   })
   expect(syncer.read()).not.toMatchObject({
     'tsconfig.local.json': expect.any(String),
+  })
+})
+
+test('aggressive', async () => {
+  const syncer = jestFixture({
+    targetState: {
+      'tsconfig.json': JSON.stringify({compilerOptions: {target: 'es2018'}}, null, 2),
+    },
+  })
+  syncer.sync()
+  const log = jest.fn()
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig.json'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchObject({
+    'tsconfig.json': expect.stringContaining('"target": "es2018"'),
+  })
+
+  await run({
+    cwd: syncer.baseDir,
+    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig.json', '--aggressive'],
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchObject({
+    'tsconfig.json': expect.stringContaining('"target": "es2017"'),
   })
 })
