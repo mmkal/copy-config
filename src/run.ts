@@ -6,7 +6,7 @@ import * as glob from 'glob'
 import {intersection} from 'lodash'
 import * as path from 'path'
 import type {Config} from './config'
-import {defaultConfig} from './config'
+import {aggressiveConfig, defaultConfig} from './config'
 
 type Logger = Pick<Console, 'info'>
 export const run = async ({
@@ -22,6 +22,7 @@ export const run = async ({
       '--ref': String,
       '--filter': String,
       '--purge': Boolean,
+      '--aggressive': Boolean,
     },
     {argv},
   )
@@ -42,9 +43,11 @@ export const run = async ({
     cp.execSync(`git -c advice.detachedHead=false checkout ${args['--ref']}`, {cwd: tempRepoDir})
   }
 
-  // eslint-disable-next-line mmkal/@typescript-eslint/no-require-imports
-  const config: Config = args['--config'] ? require(args['--config']) : defaultConfig
-
+  const config: Config = args['--config']
+    ? require(args['--config']) // eslint-disable-line mmkal/@typescript-eslint/no-require-imports
+    : args['--aggressive']
+    ? aggressiveConfig
+    : defaultConfig
   const handled = new Set()
 
   config.rules

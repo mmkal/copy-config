@@ -1,20 +1,39 @@
 import * as cp from 'child_process'
 import * as lodash from 'lodash'
+import * as os from 'os'
 import * as path from 'path'
 import type {PackageJson} from 'type-fest'
 
-export type MergeStrategy = (params: {
-  remoteContent: string
-  localContent: string | undefined
-  meta: {filepath: string; localCwd: string; remoteCwd: string}
-}) => string
-
-export const jsonRemoteDefaults: MergeStrategy = ({remoteContent, localContent}) => {
-  const remote = JSON.parse(remoteContent)
-  const local = JSON.parse(localContent || '{}')
-  const updated = lodash.defaultsDeep(local, remote)
-  return JSON.stringify(updated, null, 2)
+type Meta = {
+  filepath: string
+  localCwd: string
+  remoteCwd: string
 }
+
+export type MergeStrategy = (params: {remoteContent: string; localContent: string | undefined; meta: Meta}) => string
+
+const jsonMergeStrategy = <T = any>(
+  fn: (params: {remoteJson: T; localJson: T; meta: Meta}) => T,
+): MergeStrategy & {jsonMergeStrategy: typeof fn} => {
+  const mergeStrategy: MergeStrategy = ({remoteContent, localContent, meta}) => {
+    const remoteJson = JSON.parse(remoteContent)
+    const localJson = JSON.parse(localContent || '{}')
+    const updated = fn({remoteJson, localJson, meta})
+    return JSON.stringify(updated, null, 2) + os.EOL
+  }
+
+  return Object.assign(mergeStrategy, {jsonMergeStrategy: fn})
+}
+
+export const jsonRemoteDefaults = jsonMergeStrategy(({remoteJson, localJson}) => {
+  return lodash.defaultsDeep(localJson, remoteJson)
+})
+
+export const jsonAggressiveMerge = jsonMergeStrategy(({remoteJson, localJson}) => {
+  return lodash.merge({}, localJson, remoteJson)
+})
+
+export const replace: MergeStrategy = ({remoteContent}) => remoteContent
 
 export const concat: MergeStrategy = ({remoteContent, localContent}) => {
   const remoteLines = remoteContent.split('\n')
@@ -37,18 +56,15 @@ export const preferLocal: MergeStrategy = ({remoteContent, localContent}) => loc
  * - Defines a default project name of the local working directory
  * - Defines a default project version of 0.0.0
  */
-export const fairlySensiblePackageJson: MergeStrategy = ({remoteContent, localContent, meta}) => {
-  const remotePkg: PackageJson = JSON.parse(remoteContent) as PackageJson
-  const localPkg: PackageJson = JSON.parse(localContent || '{}') as PackageJson
-
-  const remoteDevDeps = remotePkg.devDependencies || {}
+export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
+  const remoteDevDeps = remoteJson.devDependencies || {}
 
   const remote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
 
   const trimmedDownRemote = {
     name: path.parse(meta.localCwd).name,
     version: '0.0.0',
-    scripts: lodash.pickBy(remotePkg.scripts, script => !script?.startsWith('_')),
+    scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
     ...(remote.startsWith('https://') && {
       homepage: remote.startsWith('https://') ? `${remote}#readme` : undefined,
       repository: {
@@ -56,9 +72,9 @@ export const fairlySensiblePackageJson: MergeStrategy = ({remoteContent, localCo
         url: (remote + '.git').replace(/\.git\.git$/, '.git'),
       },
     }),
-    files: remotePkg.files,
-    author: remotePkg.author,
-    np: remotePkg.np,
+    files: remoteJson.files,
+    author: remoteJson.author,
+    np: remoteJson.np,
     devDependencies: lodash.pick(remoteDevDeps, [
       'typescript',
       'np',
@@ -71,7 +87,15 @@ export const fairlySensiblePackageJson: MergeStrategy = ({remoteContent, localCo
     ]),
   } as PackageJson
 
-  const updatedLocal = lodash.defaultsDeep(localPkg, trimmedDownRemote)
+  return lodash.defaultsDeep(localJson, trimmedDownRemote)
+})
 
-  return JSON.stringify(updatedLocal, null, 2)
-}
+export const aggressivePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
+  const {name, version, remotePkg} = fairlySensiblePackageJson.jsonMergeStrategy({
+    remoteJson,
+    localJson: {} as PackageJson, // initialize with empty
+    meta,
+  })
+
+  return lodash.merge({name, version}, localJson, remotePkg)
+})
