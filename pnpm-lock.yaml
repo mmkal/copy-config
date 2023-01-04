@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@types/eslint': 7.29.0
+  '@types/eslint': 8.4.10
   '@types/glob': 8.0.0
   '@types/jest': 29.2.5
   '@types/lodash': 4.14.191
@@ -24,7 +24,7 @@ dependencies:
   type-fest: 3.5.0
 
 devDependencies:
-  '@types/eslint': 7.29.0
+  '@types/eslint': 8.4.10
   '@types/glob': 8.0.0
   '@types/jest': 29.2.5
   '@types/lodash': 4.14.191
@@ -975,13 +975,6 @@ packages:
       '@types/keyv': 3.1.4
       '@types/node': 18.11.18
       '@types/responselike': 1.0.0
-    dev: true
-
-  /@types/eslint/7.29.0:
-    resolution: {integrity: sha512-VNcvioYDH8/FxaeTKkM4/TiTwt6pBV9E3OfGmvaw8tPl0rrHCJ4Ll15HRT+pMiFAf/MLQvAzC+6RzUMEL9Ceng==}
-    dependencies:
-      '@types/estree': 1.0.0
-      '@types/json-schema': 7.0.11
     dev: true
 
   /@types/eslint/8.4.10:
