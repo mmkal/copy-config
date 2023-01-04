@@ -21,11 +21,11 @@
     "type-fest": "^3.5.0"
   },
   "devDependencies": {
-    "@types/eslint": "7.2.6",
+    "@types/eslint": "7.29.0",
     "@types/glob": "8.0.0",
     "@types/jest": "29.2.5",
     "@types/lodash": "4.14.191",
-    "eslint": "8.23.0",
+    "eslint": "8.31.0",
     "eslint-plugin-mmkal": "0.0.1-2",
     "fs-syncer": "0.4.0",
     "jest": "28.1.3",
