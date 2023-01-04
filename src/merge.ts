@@ -65,6 +65,14 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
   const trimmedDownRemote = {
     name: path.parse(meta.localCwd).name,
     version: '0.0.0',
+    main: remoteJson.main,
+    exports: remoteJson.exports,
+    module: remoteJson.module,
+    bin: remoteJson.bin,
+    type: remoteJson.types,
+    files: remoteJson.files,
+    author: remoteJson.author,
+    np: remoteJson.np,
     scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
     ...(localRepoGitRemote.startsWith('https://') && {
       homepage: localRepoGitRemote.startsWith('https://') ? `${localRepoGitRemote}#readme` : undefined,
@@ -73,9 +81,6 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
         url: (localRepoGitRemote + '.git').replace(/\.git\.git$/, '.git'),
       },
     }),
-    files: remoteJson.files,
-    author: remoteJson.author,
-    np: remoteJson.np,
     devDependencies: lodash.pick(remoteDevDeps, [
       'typescript',
       'np',
