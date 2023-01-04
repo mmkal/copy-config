@@ -21,7 +21,7 @@ npx copy-config --repo mmkal/expect-type
 The above command will:
 
 1. Clone the repo at https://github.com/mmkal/expect-type into a temporary directory
-1. Search the cloned repo for configuration files. This includes package.json, tsconfig.json, eslint, prettier, jest, babel, esbuild, swc, webpack, rollup, parcel, and vscode configuration files.
+1. Search the cloned repo for configuration files. This includes package.json, tsconfig.json, eslint, prettier, jest, babel, esbuild, swc, webpack, rollup, parcel, ts-node, and vscode configuration files.
 1. Copy what it judges to be the relevant parts of those configuration files into the current working directory (usually, another git repo or project)
 1. Merge files using what it judges to be sensible defaults.
 
