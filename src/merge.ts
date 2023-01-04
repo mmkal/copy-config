@@ -59,17 +59,18 @@ export const preferLocal: MergeStrategy = ({remoteContent, localContent}) => loc
 export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
   const remoteDevDeps = remoteJson.devDependencies || {}
 
-  const remote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
+  // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
+  const localRepoGitRemote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
 
   const trimmedDownRemote = {
     name: path.parse(meta.localCwd).name,
     version: '0.0.0',
     scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
-    ...(remote.startsWith('https://') && {
-      homepage: remote.startsWith('https://') ? `${remote}#readme` : undefined,
+    ...(localRepoGitRemote.startsWith('https://') && {
+      homepage: localRepoGitRemote.startsWith('https://') ? `${localRepoGitRemote}#readme` : undefined,
       repository: {
         type: 'git',
-        url: (remote + '.git').replace(/\.git\.git$/, '.git'),
+        url: (localRepoGitRemote + '.git').replace(/\.git\.git$/, '.git'),
       },
     }),
     files: remoteJson.files,
@@ -89,6 +90,7 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
       ...Object.keys(remoteDevDeps).filter(k => k.includes('swc')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('esbuild')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('babel')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('parcel')),
     ]),
   } as PackageJson
 
