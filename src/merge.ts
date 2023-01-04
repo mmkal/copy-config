@@ -1,5 +1,6 @@
 import * as cp from 'child_process'
 import * as lodash from 'lodash'
+import * as os from 'os'
 import * as path from 'path'
 import type {PackageJson} from 'type-fest'
 
@@ -18,7 +19,7 @@ const jsonMergeStrategy = <T = any>(
     const remoteJson = JSON.parse(remoteContent)
     const localJson = JSON.parse(localContent || '{}')
     const updated = fn({remoteJson, localJson, meta})
-    return JSON.stringify(updated, null, 2)
+    return JSON.stringify(updated, null, 2) + os.EOL
   }
 
   return Object.assign(mergeStrategy, {jsonMergeStrategy: fn})
