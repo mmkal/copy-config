@@ -56,7 +56,7 @@ export const run = async ({
       filtered.forEach(relPath => {
         const absPath = path.join(cwd, relPath)
         if (handled.has(absPath)) {
-          logger.info(`skipping ${absPath} for pattern ${rule.pattern}, already handled`)
+          logger.info(`skipping ${relPath} for pattern ${rule.pattern}, already handled`)
           return
         }
 
