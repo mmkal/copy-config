@@ -62,6 +62,22 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
   // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
   const localRepoGitRemote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
 
+  const devDepSubstrings = [
+    'jest',
+    'ava',
+    'mocha',
+    'playwright',
+    'eslint',
+    'prettier',
+    'webpack',
+    'rollup',
+    'swc',
+    'esbuild',
+    'babel',
+    'parcel',
+    'ts-node',
+  ]
+
   const trimmedDownRemote = {
     name: path.parse(meta.localCwd).name,
     version: '0.0.0',
@@ -84,19 +100,7 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
     devDependencies: lodash.pick(remoteDevDeps, [
       'typescript',
       'np',
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('jest')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('ava')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('mocha')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('playwright')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('eslint')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('prettier')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('webpack')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('rollup')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('swc')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('esbuild')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('babel')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('parcel')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('ts-node')),
+      ...Object.keys(remoteDevDeps).filter(k => devDepSubstrings.some(substring => k.includes(substring))),
     ]),
   } as PackageJson
 
