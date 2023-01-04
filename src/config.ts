@@ -33,7 +33,7 @@ export const defaultConfig: Config = {
       merge: mergeStrategies.preferLocal,
     },
     {
-      pattern: '.github/**/*.{yml,yaml}',
+      pattern: '.github/**/*.{yml,yaml,md}',
       merge: mergeStrategies.preferLocal,
     },
     {
