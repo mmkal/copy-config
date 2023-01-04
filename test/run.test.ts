@@ -182,9 +182,6 @@ test('run', async () => {
   expect(log.mock.calls).toMatchInlineSnapshot(`
     Array [
       Array [
-        "Cloning https://github.com/mmkal/eslint-plugin-codegen in /tmp/copy-config/github.com/mmkal/eslint-plugin-codegen/pX2vqe",
-      ],
-      Array [
         "writing ./package.json after matching pattern ./package.json",
       ],
       Array [
