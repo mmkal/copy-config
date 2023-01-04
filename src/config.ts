@@ -13,11 +13,15 @@ export interface Config {
 export const defaultConfig: Config = {
   rules: [
     {
-      pattern: '{.,.vscode,.devcontainer}/*.json',
+      pattern: '{.,.vscode,.devcontainer,config}/*.json',
       merge: mergeStrategies.jsonRemoteDefaults,
     },
     {
-      pattern: '.gitignore',
+      pattern: '*.codeworkspace',
+      merge: mergeStrategies.jsonRemoteDefaults,
+    },
+    {
+      pattern: '.{gitignore,prettierignore,eslintignore,npmignore}',
       merge: mergeStrategies.concat,
     },
     {
@@ -29,7 +33,7 @@ export const defaultConfig: Config = {
       merge: mergeStrategies.preferLocal,
     },
     {
-      pattern: '.github/**/*.{yml,yaml}',
+      pattern: '.github/**/*.{yml,yaml,md}',
       merge: mergeStrategies.preferLocal,
     },
     {

@@ -113,12 +113,8 @@ test('run', async () => {
       "package.json": "{
       \\"name\\": \\"run\\",
       \\"version\\": \\"0.0.0\\",
-      \\"scripts\\": {
-        \\"eslint\\": \\"eslint --ext '.ts,.js,.md'\\",
-        \\"lint\\": \\"tsc && eslint .\\",
-        \\"build\\": \\"tsc -p tsconfig.lib.json\\",
-        \\"test\\": \\"jest\\"
-      },
+      \\"main\\": \\"dist/index.js\\",
+      \\"type\\": \\"dist/index.d.ts\\",
       \\"files\\": [
         \\"dist\\",
         \\"*.md\\"
@@ -126,15 +122,25 @@ test('run', async () => {
       \\"np\\": {
         \\"cleanup\\": false
       },
+      \\"scripts\\": {
+        \\"eslint\\": \\"eslint --ext '.ts,.js,.md'\\",
+        \\"lint\\": \\"tsc && eslint .\\",
+        \\"build\\": \\"tsc -p tsconfig.lib.json\\",
+        \\"test\\": \\"jest\\"
+      },
       \\"devDependencies\\": {
         \\"typescript\\": \\"4.8.2\\",
         \\"np\\": \\"7.6.2\\",
+        \\"@babel/types\\": \\"7.12.11\\",
+        \\"@types/babel__generator\\": \\"7.6.2\\",
+        \\"@types/babel__traverse\\": \\"7.11.0\\",
+        \\"@types/eslint\\": \\"7.2.6\\",
         \\"@types/jest\\": \\"29.0.0\\",
+        \\"eslint\\": \\"8.23.0\\",
+        \\"eslint-plugin-mmkal\\": \\"0.0.1-2\\",
         \\"jest\\": \\"28.1.3\\",
         \\"ts-jest\\": \\"28.0.8\\",
-        \\"@types/eslint\\": \\"7.2.6\\",
-        \\"eslint\\": \\"8.23.0\\",
-        \\"eslint-plugin-mmkal\\": \\"0.0.1-2\\"
+        \\"ts-node\\": \\"9.1.1\\"
       }
     }
     ",
@@ -181,31 +187,37 @@ test('run', async () => {
         "writing ./package.json after matching pattern ./package.json",
       ],
       Array [
-        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
+        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml,md}",
+      ],
+      Array [
+        "writing ./.eslintrc.cjs after matching pattern ./*.{js,cjs,ts}",
+      ],
+      Array [
+        "writing ./.prettierrc.js after matching pattern ./*.{js,cjs,ts}",
       ],
       Array [
         "writing ./jest.config.js after matching pattern ./*.{js,cjs,ts}",
       ],
       Array [
-        "writing ./.eslintrc.cjs after matching pattern ./.*.{js,cjs}",
+        "skipping ./.eslintrc.cjs for pattern ./.*.{js,cjs}, already handled",
       ],
       Array [
-        "writing ./.prettierrc.js after matching pattern ./.*.{js,cjs}",
+        "skipping ./.prettierrc.js for pattern ./.*.{js,cjs}, already handled",
       ],
       Array [
-        "writing .gitignore after matching pattern .gitignore",
+        "writing .gitignore after matching pattern .{gitignore,prettierignore,eslintignore,npmignore}",
       ],
       Array [
-        "skipping ./package.json for pattern {.,.vscode,.devcontainer}/*.json, already handled",
+        "skipping ./package.json for pattern {.,.vscode,.devcontainer,config}/*.json, already handled",
       ],
       Array [
-        "writing ./tsconfig.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing ./tsconfig.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
       Array [
-        "writing ./tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing ./tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
       Array [
-        "writing .vscode/settings.json after matching pattern {.,.vscode,.devcontainer}/*.json",
+        "writing .vscode/settings.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
     ]
   `)

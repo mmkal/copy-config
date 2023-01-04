@@ -50,12 +50,14 @@ export const run = async ({
     : defaultConfig
   const handled = new Set()
 
+  const globSync: typeof glob.sync = (pattern, options) => glob.sync(pattern, {dot: true, ...options})
+
   config.rules
     .slice()
     .reverse()
     .forEach(rule => {
-      const files = glob.sync(rule.pattern, {cwd: tempRepoDir})
-      const filtered = args['--filter'] ? intersection(files, glob.sync(args['--filter'], {cwd: tempRepoDir})) : files
+      const files = globSync(rule.pattern, {cwd: tempRepoDir})
+      const filtered = args['--filter'] ? intersection(files, globSync(args['--filter'], {cwd: tempRepoDir})) : files
       filtered.forEach(relPath => {
         const absPath = path.join(cwd, relPath)
         if (handled.has(absPath)) {
@@ -85,8 +87,8 @@ export const run = async ({
       .slice()
       .reverse()
       .forEach(rule => {
-        const localFiles = glob.sync(rule.pattern, {cwd})
-        const filtered = args['--filter'] ? intersection(localFiles, glob.sync(args['--filter'], {cwd})) : localFiles
+        const localFiles = globSync(rule.pattern, {cwd})
+        const filtered = args['--filter'] ? intersection(localFiles, globSync(args['--filter'], {cwd})) : localFiles
         filtered.forEach(relPath => {
           const remoteFile = path.join(tempRepoDir, relPath)
           const absPath = path.join(cwd, relPath)

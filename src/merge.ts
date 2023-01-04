@@ -59,31 +59,48 @@ export const preferLocal: MergeStrategy = ({remoteContent, localContent}) => loc
 export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
   const remoteDevDeps = remoteJson.devDependencies || {}
 
-  const remote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
+  // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
+  const localRepoGitRemote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
+
+  const devDepSubstrings = [
+    'jest',
+    'ava',
+    'mocha',
+    'playwright',
+    'eslint',
+    'prettier',
+    'webpack',
+    'rollup',
+    'swc',
+    'esbuild',
+    'babel',
+    'parcel',
+    'ts-node',
+  ]
 
   const trimmedDownRemote = {
     name: path.parse(meta.localCwd).name,
     version: '0.0.0',
-    scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
-    ...(remote.startsWith('https://') && {
-      homepage: remote.startsWith('https://') ? `${remote}#readme` : undefined,
-      repository: {
-        type: 'git',
-        url: (remote + '.git').replace(/\.git\.git$/, '.git'),
-      },
-    }),
+    main: remoteJson.main,
+    exports: remoteJson.exports,
+    module: remoteJson.module,
+    bin: remoteJson.bin,
+    type: remoteJson.types,
     files: remoteJson.files,
     author: remoteJson.author,
     np: remoteJson.np,
+    scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
+    ...(localRepoGitRemote.startsWith('https://') && {
+      homepage: localRepoGitRemote.startsWith('https://') ? `${localRepoGitRemote}#readme` : undefined,
+      repository: {
+        type: 'git',
+        url: (localRepoGitRemote + '.git').replace(/\.git\.git$/, '.git'),
+      },
+    }),
     devDependencies: lodash.pick(remoteDevDeps, [
       'typescript',
       'np',
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('jest')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('ava')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('mocha')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('playwright')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('eslint')),
-      ...Object.keys(remoteDevDeps).filter(k => k.includes('prettier')),
+      ...Object.keys(remoteDevDeps).filter(k => devDepSubstrings.some(substring => k.includes(substring))),
     ]),
   } as PackageJson
 
