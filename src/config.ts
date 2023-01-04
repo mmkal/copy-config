@@ -16,7 +16,11 @@ export const defaultConfig: Config = {
       merge: mergeStrategies.jsonRemoteDefaults,
     },
     {
-      pattern: '.gitignore',
+      pattern: '*.codeworkspace',
+      merge: mergeStrategies.jsonRemoteDefaults,
+    },
+    {
+      pattern: '.{gitignore,prettierignore,eslintignore,npmignore}',
       merge: mergeStrategies.concat,
     },
     {

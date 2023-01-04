@@ -68,6 +68,11 @@ export const fairlySensiblePackageJson: MergeStrategy = ({remoteContent, localCo
       ...Object.keys(remoteDevDeps).filter(k => k.includes('playwright')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('eslint')),
       ...Object.keys(remoteDevDeps).filter(k => k.includes('prettier')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('webpack')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('rollup')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('swc')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('esbuild')),
+      ...Object.keys(remoteDevDeps).filter(k => k.includes('babel')),
     ]),
   } as PackageJson
 

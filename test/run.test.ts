@@ -133,7 +133,10 @@ test('run', async () => {
         \\"ts-jest\\": \\"28.0.8\\",
         \\"@types/eslint\\": \\"7.2.6\\",
         \\"eslint\\": \\"8.23.0\\",
-        \\"eslint-plugin-mmkal\\": \\"0.0.1-2\\"
+        \\"eslint-plugin-mmkal\\": \\"0.0.1-2\\",
+        \\"@babel/types\\": \\"7.12.11\\",
+        \\"@types/babel__generator\\": \\"7.6.2\\",
+        \\"@types/babel__traverse\\": \\"7.11.0\\"
       }
     }",
       "tsconfig.json": "{
