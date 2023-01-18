@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/eslint': 8.4.10
   '@types/glob': 8.0.0
-  '@types/jest': 29.2.5
+  '@types/jest': 29.2.6
   '@types/lodash': 4.14.191
   arg: ^5.0.2
   eslint: 8.32.0
@@ -26,7 +26,7 @@ dependencies:
 devDependencies:
   '@types/eslint': 8.4.10
   '@types/glob': 8.0.0
-  '@types/jest': 29.2.5
+  '@types/jest': 29.2.6
   '@types/lodash': 4.14.191
   eslint: 8.32.0
   eslint-plugin-mmkal: 0.0.1-2_rzqleksbn724felyez5kdmtxey
@@ -1021,8 +1021,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.0
     dev: true
 
-  /@types/jest/29.2.5:
-    resolution: {integrity: sha512-H2cSxkKgVmqNHXP7TC2L/WUorrZu8ZigyRywfVzv6EyBlxj39n4C00hjXYQWsbwqgElaj/CiAeSRmk5GoaKTgw==}
+  /@types/jest/29.2.6:
+    resolution: {integrity: sha512-XEUC/Tgw3uMh6Ho8GkUtQ2lPhY5Fmgyp3TdlkTJs1W9VgNxs+Ow/x3Elh8lHQKqCbZL0AubQuqWjHVT033Hhrw==}
     dependencies:
       expect: 29.3.1
       pretty-format: 29.3.1
