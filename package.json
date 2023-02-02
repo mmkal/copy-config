@@ -21,7 +21,7 @@
     "type-fest": "^3.5.0"
   },
   "devDependencies": {
-    "@types/eslint": "8.4.10",
+    "@types/eslint": "8.21.0",
     "@types/glob": "8.0.1",
     "@types/jest": "29.4.0",
     "@types/lodash": "4.14.191",
