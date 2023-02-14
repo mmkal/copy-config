@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@types/eslint': 8.21.0
+  '@types/eslint': 8.21.1
   '@types/glob': 8.0.1
   '@types/jest': 29.4.0
   '@types/lodash': 4.14.191
@@ -24,7 +24,7 @@ dependencies:
   type-fest: 3.5.0
 
 devDependencies:
-  '@types/eslint': 8.21.0
+  '@types/eslint': 8.21.1
   '@types/glob': 8.0.1
   '@types/jest': 29.4.0
   '@types/lodash': 4.14.191
@@ -977,8 +977,8 @@ packages:
       '@types/responselike': 1.0.0
     dev: true
 
-  /@types/eslint/8.21.0:
-    resolution: {integrity: sha512-35EhHNOXgxnUgh4XCJsGhE7zdlDhYDN/aMG6UbkByCFFNgQ7b3U+uVoqBpicFydR8JEfgdjCF7SJ7MiJfzuiTA==}
+  /@types/eslint/8.21.1:
+    resolution: {integrity: sha512-rc9K8ZpVjNcLs8Fp0dkozd5Pt2Apk1glO4Vgz8ix1u6yFByxfqo5Yavpy65o+93TAe24jr7v+eSBtFLvOQtCRQ==}
     dependencies:
       '@types/estree': 1.0.0
       '@types/json-schema': 7.0.11
@@ -2573,7 +2573,7 @@ packages:
       '@rushstack/eslint-plugin': 0.10.0_7kw3g6rralp5ps6mg3uyzz6azm
       '@rushstack/eslint-plugin-packlets': 0.5.0_7kw3g6rralp5ps6mg3uyzz6azm
       '@rushstack/eslint-plugin-security': 0.4.0_7kw3g6rralp5ps6mg3uyzz6azm
-      '@types/eslint': 8.21.0
+      '@types/eslint': 8.21.1
       '@typescript-eslint/eslint-plugin': 5.48.0_ddfje6clmktndfpbpk5swat3gi
       '@typescript-eslint/parser': 5.48.0_7kw3g6rralp5ps6mg3uyzz6azm
       eslint-config-xo: 0.42.0_eslint@8.34.0
