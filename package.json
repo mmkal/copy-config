@@ -25,7 +25,7 @@
     "@types/glob": "8.1.0",
     "@types/jest": "29.4.0",
     "@types/lodash": "4.14.191",
-    "eslint": "8.34.0",
+    "eslint": "8.35.0",
     "eslint-plugin-mmkal": "0.0.1-2",
     "fs-syncer": "0.4.0",
     "jest": "28.1.3",
