@@ -4,7 +4,7 @@ specifiers:
   '@types/eslint': 8.21.3
   '@types/glob': 8.1.0
   '@types/jest': 29.5.0
-  '@types/lodash': 4.14.191
+  '@types/lodash': 4.14.192
   arg: ^5.0.2
   eslint: 8.36.0
   eslint-plugin-mmkal: 0.0.1-2
@@ -27,7 +27,7 @@ devDependencies:
   '@types/eslint': 8.21.3
   '@types/glob': 8.1.0
   '@types/jest': 29.5.0
-  '@types/lodash': 4.14.191
+  '@types/lodash': 4.14.192
   eslint: 8.36.0
   eslint-plugin-mmkal: 0.0.1-2_rwl2zi4jsw64m2cg5d2acurnyy
   fs-syncer: 0.4.0
@@ -1062,8 +1062,8 @@ packages:
       '@types/node': 18.11.18
     dev: true
 
-  /@types/lodash/4.14.191:
-    resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
+  /@types/lodash/4.14.192:
+    resolution: {integrity: sha512-km+Vyn3BYm5ytMO13k9KTp27O75rbQ0NFw+U//g+PX7VZyjCioXaRFisqSIJRECljcTv73G3i6BpglNGHgUQ5A==}
     dev: true
 
   /@types/minimatch/5.1.2:
