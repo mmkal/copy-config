@@ -30,7 +30,7 @@
     "fs-syncer": "0.4.0",
     "jest": "29.5.0",
     "ts-jest": "29.1.0",
-    "typescript": "5.0.3",
+    "typescript": "5.0.4",
     "np": "7.7.0"
   },
   "files": [
