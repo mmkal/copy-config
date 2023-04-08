@@ -1,6 +1,6 @@
 {
   "name": "copy-config",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Copies another repo's configuration",
   "main": "dist/index.js",
   "bin": "dist/bin.js",
