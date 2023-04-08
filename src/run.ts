@@ -2,7 +2,8 @@ import arg from 'arg'
 import * as assert from 'assert'
 import * as cp from 'child_process'
 import * as realFs from 'fs'
-import * as glob from 'glob'
+import {globSync as _globSync} from 'glob'
+import type {GlobOptionsWithFileTypesFalse} from 'glob/dist/cjs'
 import {intersection} from 'lodash'
 import * as path from 'path'
 import type {Config} from './config'
@@ -66,7 +67,8 @@ export const run = async ({
     : defaultConfig
   const handled = new Set()
 
-  const globSync: typeof glob.sync = (pattern, options) => glob.sync(pattern, {dot: true, ...options})
+  const globSync = (pattern: string, options: GlobOptionsWithFileTypesFalse) =>
+    _globSync(pattern, {dot: true, ...options})
 
   config.rules
     .slice()

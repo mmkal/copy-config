@@ -184,37 +184,37 @@ test('run', async () => {
   expect(log.mock.calls).toMatchInlineSnapshot(`
     [
       [
-        "writing ./package.json after matching pattern ./package.json",
+        "writing package.json after matching pattern ./package.json",
       ],
       [
         "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml,md}",
       ],
       [
-        "writing ./.eslintrc.cjs after matching pattern ./*.{js,cjs,ts}",
+        "writing jest.config.js after matching pattern ./*.{js,cjs,ts}",
       ],
       [
-        "writing ./.prettierrc.js after matching pattern ./*.{js,cjs,ts}",
+        "writing .prettierrc.js after matching pattern ./*.{js,cjs,ts}",
       ],
       [
-        "writing ./jest.config.js after matching pattern ./*.{js,cjs,ts}",
+        "writing .eslintrc.cjs after matching pattern ./*.{js,cjs,ts}",
       ],
       [
-        "skipping ./.eslintrc.cjs for pattern ./.*.{js,cjs}, already handled",
+        "skipping .prettierrc.js for pattern ./.*.{js,cjs}, already handled",
       ],
       [
-        "skipping ./.prettierrc.js for pattern ./.*.{js,cjs}, already handled",
+        "skipping .eslintrc.cjs for pattern ./.*.{js,cjs}, already handled",
       ],
       [
         "writing .gitignore after matching pattern .{gitignore,prettierignore,eslintignore,npmignore}",
       ],
       [
-        "skipping ./package.json for pattern {.,.vscode,.devcontainer,config}/*.json, already handled",
+        "writing tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
       [
-        "writing ./tsconfig.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
+        "writing tsconfig.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
       [
-        "writing ./tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
+        "skipping package.json for pattern {.,.vscode,.devcontainer,config}/*.json, already handled",
       ],
       [
         "writing .vscode/settings.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
