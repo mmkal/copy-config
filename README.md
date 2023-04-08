@@ -27,17 +27,39 @@ The above command will:
 
 A note on the words "relevant" and "sensible" above: these are subjective. In the case of most files, it will write the remote file content if no local equivalent exists. Otherwise, it leaves the local file alone. In the case of package.json files, it will collect some devDependencies matching a whitelist of substrings, and some `scripts` and other boilerplate-ish pieces of configuration too, then merge with the local package.json file (if it exists), using [`lodash.defaultsDeep`](https://lodash.com/docs/4.17.15#defaultsDeep). Other json files will be directly merged using [`lodash.defaultsDeep`](https://lodash.com/docs/4.17.15#defaultsDeep).
 
+Or copy from a local path, for example in a monorepo:
+
+```
+npx copy-config --path ../some-pkg
+```
+
+This will do the same as the above, but instead of cloning a repo, it uses the specified path (absolute, or relative to the current working directory) as the project directory to copy config files from.
+
+When the current working directory is an existing project, you can use `--output` to create a new project with the same config:
+
+```sh
+npx copy-config --path . --output ../new-pkg
+```
+
 ## Options
 
 ⚠️ Note: these options are fresh and might change, until this library reaches v1. If you're using them, follow the repo's releases to watch for breaking changes. ⚠️
 
 ### `--repo`
 
-A remote repo to clone and scan for config files.
+A remote repo to clone and scan for config files. This will be passed straight to `git clone` in a sub-shell, so should work with `https:` or `ssh:`, or any other protocol that works with `git clone` for you.
 
 ### `--ref`
 
 A sha, tag, or branch to checkout on the remote repo before scanning for files. Using this can ensure you _don't_ get updated files when the remote repo pushes changes - use when you want stability rather than to be on the bleeding edge.
+
+### `--path`
+
+If not specifying `--repo`, this must be used to specify a path to a directory containing a project to copy config files from. For example, you could create a new project based on an existing one in a monorepo.
+
+### `--output`
+
+Directory to copy files into.
 
 ### `--filter`
 
@@ -78,3 +100,12 @@ module.exports = {
     ]
 }
 ```
+
+# Why
+
+## What about yeoman
+
+1. It's not just project-scaffolding. You can _re_-run the command to update configs.
+2. There's some smartness built in (not much, but IMHO a sensible amount). This means you can steal configs from anywhere, not just special scaffold projects.
+3. Scaffolding projects are often toy examples, unmaintained or unrealistic. This lets you borrow config from places you _know_ work.
+4. This corresponds more closely to what you (or I) do manually. Find a project you like the set-up of, look at all the dev dependencies, config files, etc. and do a bunch of copy-pasting, adjusting for things like project names, etc.
