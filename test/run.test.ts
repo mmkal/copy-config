@@ -12,7 +12,7 @@ test('run', async () => {
   })
 
   expect(syncer.read()).toMatchInlineSnapshot(`
-    Object {
+    {
       ".eslintrc.cjs": "// eslint-disable-next-line mmkal/import/no-extraneous-dependencies
     const recommended = require('eslint-plugin-mmkal').getRecommended()
 
@@ -38,8 +38,8 @@ test('run', async () => {
 
     // console.dir(module.exports, {depth: 100})
     ",
-      ".github": Object {
-        "workflows": Object {
+      ".github": {
+        "workflows": {
           "ci.yml": "name: CI
     on:
       push:
@@ -56,7 +56,7 @@ test('run', async () => {
           - run: pnpm install
           - run: pnpm run build
           - run: pnpm run lint
-          - run: pnpm test -- --coverage --coverageReporters=\\"json-summary\\"
+          - run: pnpm test -- --coverage --coverageReporters="json-summary"
           - uses: actions/github-script@v6
             id: coveragejson
             with:
@@ -91,16 +91,16 @@ test('run', async () => {
     yarn.lock",
       ".prettierrc.js": "module.exports = require('eslint-plugin-mmkal/src/prettierrc')
     ",
-      ".vscode": Object {
+      ".vscode": {
         "settings.json": "{
-      \\"editor.codeActionsOnSave\\": {
-        \\"source.fixAll.eslint\\": true
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
       },
-      \\"eslint.validate\\": [
-        \\"javascript\\",
-        \\"typescript\\"
+      "eslint.validate": [
+        "javascript",
+        "typescript"
       ],
-      \\"typescript.tsdk\\": \\"node_modules/typescript/lib\\"
+      "typescript.tsdk": "node_modules/typescript/lib"
     }
     ",
       },
@@ -111,70 +111,70 @@ test('run', async () => {
     }
     ",
       "package.json": "{
-      \\"name\\": \\"run\\",
-      \\"version\\": \\"0.0.0\\",
-      \\"main\\": \\"dist/index.js\\",
-      \\"type\\": \\"dist/index.d.ts\\",
-      \\"files\\": [
-        \\"dist\\",
-        \\"*.md\\"
+      "name": "run",
+      "version": "0.0.0",
+      "main": "dist/index.js",
+      "type": "dist/index.d.ts",
+      "files": [
+        "dist",
+        "*.md"
       ],
-      \\"np\\": {
-        \\"cleanup\\": false
+      "np": {
+        "cleanup": false
       },
-      \\"scripts\\": {
-        \\"eslint\\": \\"eslint --ext '.ts,.js,.md'\\",
-        \\"lint\\": \\"tsc && eslint .\\",
-        \\"build\\": \\"tsc -p tsconfig.lib.json\\",
-        \\"test\\": \\"jest\\"
+      "scripts": {
+        "eslint": "eslint --ext '.ts,.js,.md'",
+        "lint": "tsc && eslint .",
+        "build": "tsc -p tsconfig.lib.json",
+        "test": "jest"
       },
-      \\"devDependencies\\": {
-        \\"typescript\\": \\"4.8.2\\",
-        \\"np\\": \\"7.6.2\\",
-        \\"@babel/types\\": \\"7.12.11\\",
-        \\"@types/babel__generator\\": \\"7.6.2\\",
-        \\"@types/babel__traverse\\": \\"7.11.0\\",
-        \\"@types/eslint\\": \\"7.2.6\\",
-        \\"@types/jest\\": \\"29.0.0\\",
-        \\"eslint\\": \\"8.23.0\\",
-        \\"eslint-plugin-mmkal\\": \\"0.0.1-2\\",
-        \\"jest\\": \\"28.1.3\\",
-        \\"ts-jest\\": \\"28.0.8\\",
-        \\"ts-node\\": \\"9.1.1\\"
+      "devDependencies": {
+        "typescript": "4.8.2",
+        "np": "7.6.2",
+        "@babel/types": "7.12.11",
+        "@types/babel__generator": "7.6.2",
+        "@types/babel__traverse": "7.11.0",
+        "@types/eslint": "7.2.6",
+        "@types/jest": "29.0.0",
+        "eslint": "8.23.0",
+        "eslint-plugin-mmkal": "0.0.1-2",
+        "jest": "28.1.3",
+        "ts-jest": "28.0.8",
+        "ts-node": "9.1.1"
       }
     }
     ",
       "tsconfig.json": "{
-      \\"compilerOptions\\": {
-        \\"lib\\": [
-          \\"es2017\\",
-          \\"DOM\\"
+      "compilerOptions": {
+        "lib": [
+          "es2017",
+          "DOM"
         ],
-        \\"target\\": \\"es2017\\",
-        \\"module\\": \\"commonjs\\",
-        \\"strict\\": true,
-        \\"noEmit\\": true,
-        \\"noErrorTruncation\\": true,
-        \\"esModuleInterop\\": true
+        "target": "es2017",
+        "module": "commonjs",
+        "strict": true,
+        "noEmit": true,
+        "noErrorTruncation": true,
+        "esModuleInterop": true
       },
-      \\"include\\": [
-        \\"src\\",
-        \\"test\\",
-        \\"*.js\\",
-        \\".*.*js\\",
-        \\"*.md\\"
+      "include": [
+        "src",
+        "test",
+        "*.js",
+        ".*.*js",
+        "*.md"
       ]
     }
     ",
       "tsconfig.lib.json": "{
-      \\"extends\\": \\"./tsconfig.json\\",
-      \\"compilerOptions\\": {
-        \\"noEmit\\": false,
-        \\"declaration\\": true,
-        \\"outDir\\": \\"dist\\"
+      "extends": "./tsconfig.json",
+      "compilerOptions": {
+        "noEmit": false,
+        "declaration": true,
+        "outDir": "dist"
       },
-      \\"include\\": [
-        \\"src\\"
+      "include": [
+        "src"
       ]
     }
     ",
@@ -182,41 +182,41 @@ test('run', async () => {
   `)
 
   expect(log.mock.calls).toMatchInlineSnapshot(`
-    Array [
-      Array [
+    [
+      [
         "writing ./package.json after matching pattern ./package.json",
       ],
-      Array [
+      [
         "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml,md}",
       ],
-      Array [
+      [
         "writing ./.eslintrc.cjs after matching pattern ./*.{js,cjs,ts}",
       ],
-      Array [
+      [
         "writing ./.prettierrc.js after matching pattern ./*.{js,cjs,ts}",
       ],
-      Array [
+      [
         "writing ./jest.config.js after matching pattern ./*.{js,cjs,ts}",
       ],
-      Array [
+      [
         "skipping ./.eslintrc.cjs for pattern ./.*.{js,cjs}, already handled",
       ],
-      Array [
+      [
         "skipping ./.prettierrc.js for pattern ./.*.{js,cjs}, already handled",
       ],
-      Array [
+      [
         "writing .gitignore after matching pattern .{gitignore,prettierignore,eslintignore,npmignore}",
       ],
-      Array [
+      [
         "skipping ./package.json for pattern {.,.vscode,.devcontainer,config}/*.json, already handled",
       ],
-      Array [
+      [
         "writing ./tsconfig.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
-      Array [
+      [
         "writing ./tsconfig.lib.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
-      Array [
+      [
         "writing .vscode/settings.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
       ],
     ]
@@ -347,16 +347,16 @@ test('local source with output path', async () => {
   })
 
   expect(syncer.read()).toMatchInlineSnapshot(`
-    Object {
-      "otherdir": Object {
+    {
+      "otherdir": {
         ".gitignore": "*.md
     ",
       },
-      "sourcedir": Object {
+      "sourcedir": {
         ".gitignore": "*.txt
     ",
       },
-      "targetdir": Object {
+      "targetdir": {
         ".gitignore": "*.txt",
       },
     }

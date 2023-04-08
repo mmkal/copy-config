@@ -8,9 +8,9 @@ test('remote defaults', () => {
     meta: {} as any,
   })
   expect(JSON.parse(merged)).toMatchInlineSnapshot(`
-    Object {
+    {
       "a": 1.5,
-      "b": Object {
+      "b": {
         "c": 3,
         "d": 4,
       },
@@ -27,9 +27,9 @@ test('aggressive merge', () => {
     meta: {} as any,
   })
   expect(JSON.parse(merged)).toMatchInlineSnapshot(`
-    Object {
+    {
       "a": 1,
-      "b": Object {
+      "b": {
         "c": 3,
         "d": 4,
       },
