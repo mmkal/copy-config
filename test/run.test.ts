@@ -326,3 +326,39 @@ test('aggressive', async () => {
     'tsconfig.json': expect.stringContaining('"target": "es2017"'),
   })
 })
+
+test('local source with output path', async () => {
+  const syncer = jestFixture({
+    targetState: {
+      sourcedir: {
+        '.gitignore': '*.txt',
+      },
+      otherdir: {
+        '.gitignore': '*.md',
+      },
+    },
+  })
+
+  syncer.sync()
+
+  await run({
+    cwd: syncer.baseDir + '/sourcedir',
+    argv: ['--path', '.', '--output', '../targetdir'],
+  })
+
+  expect(syncer.read()).toMatchInlineSnapshot(`
+    Object {
+      "otherdir": Object {
+        ".gitignore": "*.md
+    ",
+      },
+      "sourcedir": Object {
+        ".gitignore": "*.txt
+    ",
+      },
+      "targetdir": Object {
+        ".gitignore": "*.txt",
+      },
+    }
+  `)
+})

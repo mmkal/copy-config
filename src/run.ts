@@ -9,6 +9,7 @@ import type {Config} from './config'
 import {aggressiveConfig, defaultConfig} from './config'
 
 type Logger = Pick<Console, 'info'>
+
 export const run = async ({
   fs = realFs,
   cwd = process.cwd(),
@@ -18,8 +19,10 @@ export const run = async ({
   const args = arg(
     {
       '--repo': String,
-      '--config': String,
       '--ref': String,
+      '--path': String,
+      '--output': String,
+      '--config': String,
       '--filter': String,
       '--purge': Boolean,
       '--aggressive': Boolean,
@@ -27,20 +30,33 @@ export const run = async ({
     {argv},
   )
 
-  let repo = args['--repo']
-  assert.ok(repo, `--repo must be defined`)
-  if (!repo.includes('://')) repo = `https://github.com/${repo}`
-  assert.ok(!/\s/.test(repo), `Invalid repo: ${repo}`)
+  const outputPath = path.resolve(cwd, args['--output'] || '.')
 
-  const tmpParent = '/tmp/copy-config/' + repo.split('://')[1]
-  fs.mkdirSync(tmpParent, {recursive: true})
-  const tempDir = fs.mkdtempSync(tmpParent + '/')
-  cp.execSync(`git clone ${repo}`, {cwd: tempDir})
-  const tempRepoDir = path.join(tempDir, fs.readdirSync(tempDir)[0])
+  const getTempRepoDir = () => {
+    let repo = args['--repo']
+    assert.ok(repo, `--repo must be defined`)
+    if (!repo.includes('://')) repo = `https://github.com/${repo}`
+    assert.ok(!/\s/.test(repo), `Invalid repo: ${repo}`)
+
+    const tmpParent = '/tmp/copy-config/' + repo.split('://')[1]
+    fs.mkdirSync(tmpParent, {recursive: true})
+    const tempDir = fs.mkdtempSync(tmpParent + '/')
+    cp.execSync(`git clone ${repo}`, {cwd: tempDir})
+    const tempRepoDir = path.join(tempDir, fs.readdirSync(tempDir)[0])
+    return tempRepoDir
+  }
+
+  const getLocalDir = () => {
+    const inputPath = args['--path']
+    assert.ok(inputPath, '--path must be defined')
+    return path.resolve(cwd, inputPath)
+  }
+
+  const copyFrom = args['--path'] ? getLocalDir() : getTempRepoDir()
 
   if (args['--ref']) {
-    cp.execSync(`git fetch`, {cwd: tempRepoDir})
-    cp.execSync(`git -c advice.detachedHead=false checkout ${args['--ref']}`, {cwd: tempRepoDir})
+    cp.execSync(`git fetch`, {cwd: copyFrom})
+    cp.execSync(`git -c advice.detachedHead=false checkout ${args['--ref']}`, {cwd: copyFrom})
   }
 
   const config: Config = args['--config']
@@ -56,21 +72,21 @@ export const run = async ({
     .slice()
     .reverse()
     .forEach(rule => {
-      const files = globSync(rule.pattern, {cwd: tempRepoDir})
-      const filtered = args['--filter'] ? intersection(files, globSync(args['--filter'], {cwd: tempRepoDir})) : files
+      const files = globSync(rule.pattern, {cwd: copyFrom})
+      const filtered = args['--filter'] ? intersection(files, globSync(args['--filter'], {cwd: copyFrom})) : files
       filtered.forEach(relPath => {
-        const absPath = path.join(cwd, relPath)
+        const absPath = path.join(outputPath, relPath)
         if (handled.has(absPath)) {
           logger.info(`skipping ${relPath} for pattern ${rule.pattern}, already handled`)
           return
         }
 
-        const remoteContent = fs.readFileSync(path.join(tempRepoDir, relPath)).toString()
+        const remoteContent = fs.readFileSync(path.join(copyFrom, relPath)).toString()
         const localContent = fs.existsSync(absPath) ? fs.readFileSync(absPath).toString() : undefined
         const newContent = rule.merge({
           remoteContent,
           localContent,
-          meta: {filepath: relPath, localCwd: cwd, remoteCwd: tempRepoDir},
+          meta: {filepath: relPath, localCwd: outputPath, remoteCwd: copyFrom},
         })
         if (newContent) {
           logger.info(`writing ${relPath} after matching pattern ${rule.pattern}`)
@@ -83,17 +99,23 @@ export const run = async ({
     })
 
   if (args['--purge']) {
+    if (args['--path']) {
+      throw new Error(`Can't purge if specifying local path`)
+    }
+
     config.rules
       .slice()
       .reverse()
       .forEach(rule => {
-        const localFiles = globSync(rule.pattern, {cwd})
-        const filtered = args['--filter'] ? intersection(localFiles, globSync(args['--filter'], {cwd})) : localFiles
+        const localFiles = globSync(rule.pattern, {cwd: outputPath})
+        const filtered = args['--filter']
+          ? intersection(localFiles, globSync(args['--filter'], {cwd: outputPath}))
+          : localFiles
         filtered.forEach(relPath => {
-          const remoteFile = path.join(tempRepoDir, relPath)
-          const absPath = path.join(cwd, relPath)
+          const remoteFile = path.join(copyFrom, relPath)
+          const absPath = path.join(outputPath, relPath)
           if (!fs.existsSync(remoteFile)) {
-            logger.info(`Removing ${relPath} because it doesn't exist in ${repo}`)
+            logger.info(`Removing ${relPath} because it doesn't exist in ${args['--repo']}`)
             fs.unlinkSync(absPath)
           }
         })
