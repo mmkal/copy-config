@@ -100,3 +100,12 @@ module.exports = {
     ]
 }
 ```
+
+# Why
+
+## What about yeoman
+
+1. It's not just project-scaffolding. You can _re_-run the command to update configs.
+2. There's some smartness built in (not much, but IMHO a sensible amount). This means you can steal configs from anywhere, not just special scaffold projects.
+3. Scaffolding projects are often toy examples, unmaintained or unrealistic. This lets you borrow config from places you _know_ work.
+4. This corresponds more closely to what you (or I) do manually. Find a project you like the set-up of, look at all the dev dependencies, config files, etc. and do a bunch of copy-pasting, adjusting for things like project names, etc.
