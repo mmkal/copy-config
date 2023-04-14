@@ -4,11 +4,16 @@
   "description": "Copies another repo's configuration",
   "main": "dist/index.js",
   "bin": "dist/bin.js",
+  "homepage": "https://github.com/mmkal/copy-config",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mmkal/copy-config.git"
+  },
   "scripts": {
     "copy-config": "node dist/bin --repo mmkal/eslint-plugin-codegen",
     "eslint": "eslint --ext '.ts,.js,.md'",
     "lint": "tsc && eslint .",
-    "build": "tsc -p tsconfig.lib.json",
+    "build": "rm -rf dist && tsc -p tsconfig.lib.json",
     "test": "jest"
   },
   "keywords": [],

@@ -17,19 +17,24 @@ export const run = async ({
   argv = process.argv.slice(2),
   logger = console as Logger,
 } = {}) => {
-  const args = arg(
-    {
-      '--repo': String,
-      '--ref': String,
-      '--path': String,
-      '--output': String,
-      '--config': String,
-      '--filter': String,
-      '--purge': Boolean,
-      '--aggressive': Boolean,
-    },
-    {argv},
-  )
+  const argSpec = {
+    '--help': Boolean,
+    '--repo': String,
+    '--ref': String,
+    '--path': String,
+    '--output': String,
+    '--config': String,
+    '--filter': String,
+    '--purge': Boolean,
+    '--aggressive': Boolean,
+  } satisfies arg.Spec
+
+  const args = arg(argSpec, {argv})
+
+  if (args['--help']) {
+    const options = Object.entries(argSpec).map(([k, v]) => `${k}: ${v.name}`)
+    logger.info(`Available options: ${options.join(', ')}`)
+  }
 
   const outputPath = path.resolve(cwd, args['--output'] || '.')
 
