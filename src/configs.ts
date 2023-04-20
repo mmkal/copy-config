@@ -1,14 +1,6 @@
 import * as assert from 'assert'
 import * as mergeStrategies from './merge'
-
-export interface Rule {
-  pattern: string
-  merge: mergeStrategies.MergeStrategy
-}
-
-export interface Config {
-  rules: readonly Rule[]
-}
+import type {Config} from './types'
 
 export const defaultConfig: Config = {
   rules: [
@@ -50,10 +42,12 @@ const aggressiveEquivalents: Array<[mergeStrategies.MergeStrategy, mergeStrategi
   [mergeStrategies.fairlySensiblePackageJson, mergeStrategies.aggressivePackageJson],
 ]
 
-export const aggressiveConfig: Config = {
-  rules: defaultConfig.rules.map(rule => {
+export const makeAggressive = (input: Config): Config => ({
+  rules: input.rules.map(rule => {
     const pairing = aggressiveEquivalents.find(p => p[0] === rule.merge)
     assert.ok(pairing, `There should be an aggressive equivalent for ${rule.pattern} merge strategy`)
     return {pattern: rule.pattern, merge: pairing[1]}
   }),
-}
+})
+
+export const aggressiveConfig: Config = makeAggressive(defaultConfig)

@@ -6,8 +6,8 @@ import {globSync as _globSync} from 'glob'
 import type {GlobOptionsWithFileTypesFalse} from 'glob/dist/cjs'
 import {intersection} from 'lodash'
 import * as path from 'path'
-import type {Config} from './config'
-import {aggressiveConfig, defaultConfig} from './config'
+import {aggressiveConfig, defaultConfig} from './configs'
+import type {Config} from './types'
 
 type Logger = Pick<Console, 'info'>
 
