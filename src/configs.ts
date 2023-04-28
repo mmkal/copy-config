@@ -21,7 +21,7 @@ export const defaultConfig: Config = {
       merge: mergeStrategies.preferLocal,
     },
     {
-      pattern: './*.{js,cjs,ts}',
+      pattern: './*.{js,cjs,ts,mjs}',
       merge: mergeStrategies.preferLocal,
     },
     {
