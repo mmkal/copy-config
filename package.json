@@ -29,7 +29,7 @@
     "@types/eslint": "8.37.0",
     "@types/jest": "29.5.1",
     "@types/lodash": "4.14.194",
-    "eslint": "8.39.0",
+    "eslint": "8.40.0",
     "eslint-plugin-mmkal": "0.1.2",
     "fs-syncer": "0.4.0",
     "jest": "29.5.0",
