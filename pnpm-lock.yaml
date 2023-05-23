@@ -16,8 +16,8 @@ dependencies:
 
 devDependencies:
   '@types/eslint':
-    specifier: 8.37.0
-    version: 8.37.0
+    specifier: 8.40.0
+    version: 8.40.0
   '@types/jest':
     specifier: 29.5.1
     version: 29.5.1
@@ -1002,8 +1002,8 @@ packages:
       '@types/responselike': 1.0.0
     dev: true
 
-  /@types/eslint@8.37.0:
-    resolution: {integrity: sha512-Piet7dG2JBuDIfohBngQ3rCt7MgO9xCO4xIMKxBThCq5PNRB91IjlJ10eJVwfoNtvTErmxLzwBZ7rHZtbOMmFQ==}
+  /@types/eslint@8.40.0:
+    resolution: {integrity: sha512-nbq2mvc/tBrK9zQQuItvjJl++GTN5j06DaPtp3hZCpngmG6Q3xoyEmd0TwZI0gAy/G1X0zhGBbr2imsGFdFV0g==}
     dependencies:
       '@types/estree': 1.0.0
       '@types/json-schema': 7.0.11
@@ -2667,7 +2667,7 @@ packages:
       '@rushstack/eslint-plugin': 0.10.0(eslint@8.41.0)(typescript@5.0.4)
       '@rushstack/eslint-plugin-packlets': 0.5.0(eslint@8.41.0)(typescript@5.0.4)
       '@rushstack/eslint-plugin-security': 0.4.0(eslint@8.41.0)(typescript@5.0.4)
-      '@types/eslint': 8.37.0
+      '@types/eslint': 8.40.0
       '@typescript-eslint/eslint-plugin': 5.48.0(@typescript-eslint/parser@5.48.0)(eslint@8.41.0)(typescript@5.0.4)
       '@typescript-eslint/parser': 5.48.0(eslint@8.41.0)(typescript@5.0.4)
       eslint-config-xo: 0.42.0(eslint@8.41.0)
