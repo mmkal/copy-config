@@ -28,7 +28,7 @@
   "devDependencies": {
     "@types/eslint": "8.40.0",
     "@types/jest": "29.5.1",
-    "@types/lodash": "4.14.194",
+    "@types/lodash": "4.14.195",
     "eslint": "8.41.0",
     "eslint-plugin-mmkal": "0.1.2",
     "fs-syncer": "0.4.0",
