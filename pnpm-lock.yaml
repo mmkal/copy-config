@@ -37,8 +37,8 @@ devDependencies:
     specifier: 29.5.0
     version: 29.5.0
   np:
-    specifier: 8.0.0
-    version: 8.0.0
+    specifier: 8.0.1
+    version: 8.0.1
   ts-jest:
     specifier: 29.1.0
     version: 29.1.0(@babel/core@7.20.7)(jest@29.5.0)(typescript@5.0.4)
@@ -2001,7 +2001,7 @@ packages:
     dependencies:
       clone-response: 1.0.3
       get-stream: 5.2.0
-      http-cache-semantics: 4.1.0
+      http-cache-semantics: 4.1.1
       keyv: 4.5.2
       lowercase-keys: 2.0.0
       normalize-url: 6.1.0
@@ -3582,10 +3582,6 @@ packages:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
     dev: true
 
-  /http-cache-semantics@4.1.0:
-    resolution: {integrity: sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==}
-    dev: true
-
   /http-cache-semantics@4.1.1:
     resolution: {integrity: sha512-er295DKPVsV82j5kw1Gjt+ADA/XYHsajl82cGNQG2eyoPkvgUhX+nDIyelzhIWbbsXP39EHcI6l5tYs2FYqYXQ==}
     dev: true
@@ -5103,8 +5099,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /np@8.0.0:
-    resolution: {integrity: sha512-mVebUNW3MwaYC9PcUzTOHT3fxtEKecOuwXFHnjtfJgVl0OQXwT4VKP3E4VFFaGQu66xfXR/Z8JBOD7ZKh/eAfw==}
+  /np@8.0.1:
+    resolution: {integrity: sha512-5Vd3p5LlymIUhQjKIVhcf/Zh1/Mpeuo4agQ53LWXokPnGlWH3SAjZx5jmy56B904uwnKXyM/220GJae5p7/NhA==}
     engines: {git: '>=2.11.0', node: '>=16.6.0', npm: '>=7.19.0', yarn: '>=1.7.0'}
     hasBin: true
     dependencies:
