@@ -32,8 +32,22 @@ export const run = async ({
   const args = arg(argSpec, {argv})
 
   if (args['--help']) {
-    const options = Object.entries(argSpec).map(([k, v]) => `${k}: ${v.name}`)
-    logger.info(`Available options: ${options.join(', ')}`)
+    // crappy markdown parser!
+    const readme = realFs.readFileSync(path.join(__dirname, '../README.md')).toString()
+    const optionDocs = readme.split('### ').flatMap(section => {
+      if (!section.startsWith('`--')) return []
+      const option = section.split('`')[1]
+      const doc = section
+        .slice(option.length + 2)
+        .split('\n#')[0]
+        .trim()
+      return [{option, doc}]
+    })
+    const options = Object.entries(argSpec).map(
+      ([k, v]) => `${k} ${v.name.replace('Boolean', '')}\n${optionDocs.find(o => o.option === k)?.doc || ''}`,
+    )
+    logger.info(`Available options:\n\n${options.join('\n\n')}`)
+    return
   }
 
   const outputPath = path.resolve(cwd, args['--output'] || '.')

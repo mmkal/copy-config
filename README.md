@@ -79,6 +79,10 @@ Instead of the default merge strategies, use more aggressive equivalents. Merge 
 
 Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
 
+### `--help`
+
+Show help text.
+
 ## Merge strategies
 
 You might use this once, and find it useful. Or, you might want to continually "borrow" someone else's carefully-crafted configuration, every day. If you do use it regularly, you will probably eventually need to customise the merge algorithm. You can do this by creating a config file called, say `copy-config.cjs`:

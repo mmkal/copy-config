@@ -327,6 +327,51 @@ test('aggressive', async () => {
   })
 })
 
+test('help', async () => {
+  const log = jest.fn()
+
+  await run({
+    cwd: process.cwd(),
+    argv: ['--help'],
+    logger: {info: log},
+  })
+
+  expect(log.mock.calls[0][0]).toMatchInlineSnapshot(`
+    "Available options:
+
+    --help 
+    Show help text.
+
+    --repo String
+    A remote repo to clone and scan for config files. This will be passed straight to \`git clone\` in a sub-shell, so should work with \`https:\` or \`ssh:\`, or any other protocol that works with \`git clone\` for you.
+
+    --ref String
+    A sha, tag, or branch to checkout on the remote repo before scanning for files. Using this can ensure you _don't_ get updated files when the remote repo pushes changes - use when you want stability rather than to be on the bleeding edge.
+
+    --path String
+    If not specifying \`--repo\`, this must be used to specify a path to a directory containing a project to copy config files from. For example, you could create a new project based on an existing one in a monorepo.
+
+    --output String
+    Directory to copy files into.
+
+    --config String
+    Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
+
+    --filter String
+    If you only want to copy over certain kinds of file, you can use \`--filter\` to narrow down the files that will be matched in the remote repo. For example, \`npx copy-config --repo mmkal/expect-type --filter '*.json'\` will only copy JSON files.
+
+    --purge 
+    Use this to remove all config files found locally that aren't found on the remote. This is a destructive option, so use it carefully.
+
+    --aggressive 
+    (_experimental, will probably be changed to \`--strategy aggressive\`_)
+
+    Instead of the default merge strategies, use more aggressive equivalents. Merge json files, biasing to the remote content instead of local, and replace other files using the remote content directly. Like \`--purge\`, this is a potentially destructive command since it doesn't respect your local filesystem, so use carefully.
+
+    >Future: This will probably become a \`--strategy\` option, to allow for \`--strategy aggressive-if-remote-newer\` or some such. That would do a \`git blame\` on each file, and aggressively update from the remote if the remote file was more recently updated, maybe."
+  `)
+})
+
 test('local source with output path', async () => {
   const syncer = jestFixture({
     targetState: {
