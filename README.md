@@ -79,6 +79,12 @@ Instead of the default merge strategies, use more aggressive equivalents. Merge 
 
 Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
 
+You can also use the special placeholder variable `%source%` to require a file relative to the project you're copying from. For example:
+
+```bash
+npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
+```
+
 ### `--help`
 
 Show help text.

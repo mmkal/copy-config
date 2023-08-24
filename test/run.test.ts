@@ -190,13 +190,13 @@ test('run', async () => {
         "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml,md}",
       ],
       [
-        "writing jest.config.js after matching pattern ./*.{js,cjs,ts}",
+        "writing jest.config.js after matching pattern ./*.{js,cjs,ts,mjs}",
       ],
       [
-        "writing .prettierrc.js after matching pattern ./*.{js,cjs,ts}",
+        "writing .prettierrc.js after matching pattern ./*.{js,cjs,ts,mjs}",
       ],
       [
-        "writing .eslintrc.cjs after matching pattern ./*.{js,cjs,ts}",
+        "writing .eslintrc.cjs after matching pattern ./*.{js,cjs,ts,mjs}",
       ],
       [
         "skipping .prettierrc.js for pattern ./.*.{js,cjs}, already handled",
@@ -356,6 +356,12 @@ test('help', async () => {
 
     --config String
     Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
+
+    You can also use the special placeholder variable \`%source%\` to require a file relative to the project you're copying from. For example:
+
+    \`\`\`bash
+    npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
+    \`\`\`
 
     --filter String
     If you only want to copy over certain kinds of file, you can use \`--filter\` to narrow down the files that will be matched in the remote repo. For example, \`npx copy-config --repo mmkal/expect-type --filter '*.json'\` will only copy JSON files.

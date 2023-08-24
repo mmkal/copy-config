@@ -63,7 +63,7 @@ export const run = async ({
     const tempDir = fs.mkdtempSync(tmpParent + '/')
     cp.execSync(`git clone ${repo}`, {cwd: tempDir})
     const tempRepoDir = path.join(tempDir, fs.readdirSync(tempDir)[0])
-    return tempRepoDir
+    return path.join(tempRepoDir, args['--path'] || '.')
   }
 
   const getLocalDir = () => {
@@ -72,7 +72,7 @@ export const run = async ({
     return path.resolve(cwd, inputPath)
   }
 
-  const copyFrom = args['--path'] ? getLocalDir() : getTempRepoDir()
+  const copyFrom = args['--repo'] ? getTempRepoDir() : getLocalDir()
 
   if (args['--ref']) {
     cp.execSync(`git fetch`, {cwd: copyFrom})
@@ -80,7 +80,7 @@ export const run = async ({
   }
 
   const config: Config = args['--config']
-    ? require(args['--config']) // eslint-disable-line mmkal/@typescript-eslint/no-require-imports
+    ? require(args['--config'].replace('%source%', copyFrom)) // eslint-disable-line mmkal/@typescript-eslint/no-require-imports
     : args['--aggressive']
     ? aggressiveConfig
     : defaultConfig
