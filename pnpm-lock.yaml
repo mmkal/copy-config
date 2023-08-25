@@ -37,8 +37,8 @@ devDependencies:
     specifier: 29.5.0
     version: 29.5.0
   np:
-    specifier: 8.0.1
-    version: 8.0.1
+    specifier: 8.0.4
+    version: 8.0.4
   ts-jest:
     specifier: 29.1.0
     version: 29.1.0(@babel/core@7.20.7)(jest@29.5.0)(typescript@5.0.4)
@@ -5099,8 +5099,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /np@8.0.1:
-    resolution: {integrity: sha512-5Vd3p5LlymIUhQjKIVhcf/Zh1/Mpeuo4agQ53LWXokPnGlWH3SAjZx5jmy56B904uwnKXyM/220GJae5p7/NhA==}
+  /np@8.0.4:
+    resolution: {integrity: sha512-a4s1yESHcIwsrk/oaTekfbhb1R/2z2yyfVLX6Atl54w/9+QR01qeYyK3vMWgJ0UY+kYsGzQXausgvUX0pkmIMg==}
     engines: {git: '>=2.11.0', node: '>=16.6.0', npm: '>=7.19.0', yarn: '>=1.7.0'}
     hasBin: true
     dependencies:
