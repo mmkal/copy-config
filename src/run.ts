@@ -73,6 +73,7 @@ export const runWithArgs = async ({
         .trim()
         .split('\n')
         .map(line => '  ' + line)
+        .map(line => line.trim() && line)
         .join('\n')
       return [{option, doc}]
     })
@@ -98,7 +99,7 @@ export const runWithArgs = async ({
   }
 
   try {
-    if (diffCheckCommand) {
+    if (diffCheckCommand && !args['--dry-run']) {
       cp.execSync(diffCheckCommand, {stdio: 'inherit'})
     }
   } catch (error: unknown) {
