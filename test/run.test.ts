@@ -2,13 +2,20 @@ import {jestFixture} from 'fs-syncer'
 import {defaultConfig} from '../src'
 import {run, runWithArgs} from '../src/run'
 
+const testArgs = {
+  '--repo': 'mmkal/eslint-plugin-codegen',
+  '--ref': 'v0.17.0',
+  '--diff-check': '',
+}
+const testArgv = Object.entries(testArgs).flat()
+
 test('run', async () => {
   const syncer = jestFixture({targetState: {}})
   syncer.sync()
   const log = jest.fn()
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0'],
+    argv: [...testArgv],
     logger: {info: log},
   })
 
@@ -231,9 +238,8 @@ test('set variables', async () => {
   await runWithArgs({
     cwd: syncer.baseDir,
     args: {
-      '--repo': 'mmkal/eslint-plugin-codegen',
+      ...testArgs,
       '--filter': './package.json',
-      '--ref': 'v0.17.0',
       config: () => ({
         ...defaultConfig,
         variables: {
@@ -293,7 +299,7 @@ test('filter', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json'],
+    argv: [...testArgv, '--filter', './tsconfig*.json'],
     logger: {info: log},
   })
 
@@ -317,7 +323,7 @@ test('purge', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--purge'],
+    argv: [...testArgv, '--purge'],
     logger: {info: log},
   })
 
@@ -347,7 +353,7 @@ test('purge + filter', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json', '--purge'],
+    argv: [...testArgv, '--filter', './tsconfig*.json', '--purge'],
     logger: {info: log},
   })
 
@@ -371,7 +377,7 @@ test('aggressive', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig.json'],
+    argv: [...testArgv, '--filter', './tsconfig.json'],
     logger: {info: log},
   })
 
@@ -381,7 +387,7 @@ test('aggressive', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig.json', '--aggressive'],
+    argv: [...testArgv, '--filter', './tsconfig.json', '--aggressive'],
     logger: {info: log},
   })
 
@@ -403,41 +409,62 @@ test('help', async () => {
     "Available options:
 
     --help 
-    Show help text.
+      Show help text.
 
     --repo String
-    A remote repo to clone and scan for config files. This will be passed straight to \`git clone\` in a sub-shell, so should work with \`https:\` or \`ssh:\`, or any other protocol that works with \`git clone\` for you.
+      A remote repo to clone and scan for config files. This will be passed straight to \`git clone\` in a sub-shell, so should work with \`https:\` or \`ssh:\`, or any other protocol that works with \`git clone\` for you.
 
     --ref String
-    A sha, tag, or branch to checkout on the remote repo before scanning for files. Using this can ensure you _don't_ get updated files when the remote repo pushes changes - use when you want stability rather than to be on the bleeding edge.
+      A sha, tag, or branch to checkout on the remote repo before scanning for files. Using this can ensure you _don't_ get updated files when the remote repo pushes changes - use when you want stability rather than to be on the bleeding edge.
 
     --path String
-    If not specifying \`--repo\`, this must be used to specify a path to a directory containing a project to copy config files from. For example, you could create a new project based on an existing one in a monorepo.
+      If not specifying \`--repo\`, this must be used to specify a path to a directory containing a project to copy config files from. For example, you could create a new project based on an existing one in a monorepo.
 
     --output String
-    Directory to copy files into.
+      Directory to copy files into.
 
     --config String
-    Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
-
-    You can also use the special placeholder variable \`%source%\` to require a file relative to the project you're copying from. For example:
-
-    \`\`\`bash
-    npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
-    \`\`\`
+      Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
+  
+      You can also use the special placeholder variable \`%source%\` to require a file relative to the project you're copying from. For example:
+  
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
+      \`\`\`
 
     --filter String
-    If you only want to copy over certain kinds of file, you can use \`--filter\` to narrow down the files that will be matched in the remote repo. For example, \`npx copy-config --repo mmkal/expect-type --filter '*.json'\` will only copy JSON files.
+      If you only want to copy over certain kinds of file, you can use \`--filter\` to narrow down the files that will be matched in the remote repo. For example, \`npx copy-config --repo mmkal/expect-type --filter '*.json'\` will only copy JSON files.
 
     --purge 
-    Use this to remove all config files found locally that aren't found on the remote. This is a destructive option, so use it carefully.
+      Use this to remove all config files found locally that aren't found on the remote. This is a destructive option, so use it carefully.
 
     --aggressive 
-    (_experimental, will probably be changed to \`--strategy aggressive\`_)
+      (_experimental, will probably be changed to \`--strategy aggressive\`_)
+  
+      Instead of the default merge strategies, use more aggressive equivalents. Merge json files, biasing to the remote content instead of local, and replace other files using the remote content directly. Like \`--purge\`, this is a potentially destructive command since it doesn't respect your local filesystem, so use carefully.
+  
+      >Future: This will probably become a \`--strategy\` option, to allow for \`--strategy aggressive-if-remote-newer\` or some such. That would do a \`git blame\` on each file, and aggressively update from the remote if the remote file was more recently updated, maybe.
 
-    Instead of the default merge strategies, use more aggressive equivalents. Merge json files, biasing to the remote content instead of local, and replace other files using the remote content directly. Like \`--purge\`, this is a potentially destructive command since it doesn't respect your local filesystem, so use carefully.
-
-    >Future: This will probably become a \`--strategy\` option, to allow for \`--strategy aggressive-if-remote-newer\` or some such. That would do a \`git blame\` on each file, and aggressively update from the remote if the remote file was more recently updated, maybe."
+    --diff-check String
+      A command which will make sure there are no working-copy changes in the current repo. This will run before modifying your file system to avoid making changes that get mixed up with yours. This defaults to \`git diff --exit-code\`.
+  
+      You could set to something more fine-grained:
+  
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --diff-check "git diff path/to/configs --exit-code"
+      \`\`\`
+  
+      Or something else completely:
+  
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --diff-check "npm run somescript"
+      \`\`\`
+  
+      To disable checking completely you can set the command to empty string:
+  
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --diff-check ""
+      \`\`\`"
   `)
 })
 
@@ -457,7 +484,7 @@ test('local source with output path', async () => {
 
   await run({
     cwd: syncer.baseDir + '/sourcedir',
-    argv: ['--path', '.', '--output', '../targetdir'],
+    argv: ['--path', '.', '--diff-check', '', '--output', '../targetdir'],
   })
 
   expect(syncer.read()).toMatchInlineSnapshot(`

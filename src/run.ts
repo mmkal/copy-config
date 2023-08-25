@@ -29,6 +29,7 @@ const argSpec = {
   '--filter': String,
   '--purge': Boolean,
   '--aggressive': Boolean,
+  '--diff-check': String,
 } satisfies arg.Spec
 
 const parseArgv = (argv = process.argv.slice(2)) => {
@@ -64,6 +65,9 @@ export const runWithArgs = async ({
         .slice(option.length + 2)
         .split('\n#')[0]
         .trim()
+        .split('\n')
+        .map(line => '  ' + line)
+        .join('\n')
       return [{option, doc}]
     })
     const options = Object.entries(argSpec).map(
@@ -74,6 +78,17 @@ export const runWithArgs = async ({
   }
 
   const outputPath = path.resolve(cwd, args['--output'] || '.')
+
+  const diffCheckCommand = args['--diff-check'] ?? 'git diff --exit-code'
+
+  try {
+    if (diffCheckCommand) {
+      cp.execSync(diffCheckCommand, {stdio: 'inherit'})
+    }
+  } catch (error: unknown) {
+    const msg = `Diff check command "${diffCheckCommand}" failed. To resolve this you can stage your working changes before rerunning, or override the command, e.g. \`--diff-check ""\``
+    throw Object.assign(new Error(msg), {cause: error})
+  }
 
   const getTempRepoDir = () => {
     let repo = args['--repo']

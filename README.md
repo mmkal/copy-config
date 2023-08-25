@@ -85,6 +85,28 @@ You can also use the special placeholder variable `%source%` to require a file r
 npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
 ```
 
+### `--diff-check`
+
+A command which will make sure there are no working-copy changes in the current repo. This will run before modifying your file system to avoid making changes that get mixed up with yours. This defaults to `git diff --exit-code`.
+
+You could set to something more fine-grained:
+
+```bash
+npx copy-config --repo someuser/somerepo --diff-check "git diff path/to/configs --exit-code"
+```
+
+Or something else completely:
+
+```bash
+npx copy-config --repo someuser/somerepo --diff-check "npm run somescript"
+```
+
+To disable checking completely you can set the command to empty string:
+
+```bash
+npx copy-config --repo someuser/somerepo --diff-check ""
+```
+
 ### `--help`
 
 Show help text.
