@@ -9,6 +9,9 @@
     "type": "git",
     "url": "git+https://github.com/mmkal/copy-config.git"
   },
+  "engines": {
+    "node": ">12"
+  },
   "scripts": {
     "copy-config": "node dist/bin --repo mmkal/eslint-plugin-codegen",
     "eslint": "eslint --ext '.ts,.js,.md'",
