@@ -142,7 +142,9 @@ export const runWithArgs = async ({
           localContent,
           meta: {filepath: relPath, localCwd: outputPath, remoteCwd: copyFrom},
         })
-        if (newContent) {
+        if (newContent && newContent === localContent) {
+          logger.info(`leaving ${relPath}, it's already up to date. Pattern ${rule.pattern}`)
+        } else if (newContent) {
           logger.info(`writing ${relPath} after matching pattern ${rule.pattern}`)
           fs.mkdirSync(path.dirname(absPath), {recursive: true})
           fs.writeFileSync(absPath, newContent)
