@@ -12,8 +12,13 @@ import {variablesStorage} from './variables'
 
 type Logger = Pick<Console, 'info'>
 
+type MinimalFS = Pick<
+  typeof realFs,
+  'mkdirSync' | 'readFileSync' | 'writeFileSync' | 'unlinkSync' | 'mkdtempSync' | 'readdirSync' | 'existsSync'
+>
+
 export const run = async ({
-  fs = realFs,
+  fs = realFs as MinimalFS,
   cwd = process.cwd(),
   argv = process.argv.slice(2),
   logger = console as Logger,
@@ -30,6 +35,7 @@ const argSpec = {
   '--purge': Boolean,
   '--aggressive': Boolean,
   '--diff-check': String,
+  '--dry-run': Boolean,
 } satisfies arg.Spec
 
 const parseArgv = (argv = process.argv.slice(2)) => {
@@ -50,7 +56,7 @@ const parseArgv = (argv = process.argv.slice(2)) => {
 }
 
 export const runWithArgs = async ({
-  fs = realFs,
+  fs = realFs as MinimalFS,
   cwd = process.cwd(),
   args = parseArgv(process.argv.slice(2)),
   logger = console as Logger,
@@ -80,6 +86,16 @@ export const runWithArgs = async ({
   const outputPath = path.resolve(cwd, args['--output'] || '.')
 
   const diffCheckCommand = args['--diff-check'] ?? 'git diff --exit-code'
+
+  const edits = [] as Array<{type: 'write' | 'delete'; filepath: unknown; content: unknown}>
+  if (args['--dry-run']) {
+    fs = {
+      ...fs,
+      mkdirSync: () => void 0,
+      writeFileSync: (filepath, content) => void edits.push({type: 'write', filepath, content}),
+      unlinkSync: filepath => void edits.push({type: 'delete', filepath, content: null}),
+    }
+  }
 
   try {
     if (diffCheckCommand) {
@@ -142,7 +158,7 @@ export const runWithArgs = async ({
           localContent,
           meta: {filepath: relPath, localCwd: outputPath, remoteCwd: copyFrom},
         })
-        if (newContent && newContent === localContent) {
+        if (newContent === localContent) {
           logger.info(`leaving ${relPath}, it's already up to date. Pattern ${rule.pattern}`)
         } else if (newContent) {
           logger.info(`writing ${relPath} after matching pattern ${rule.pattern}`)

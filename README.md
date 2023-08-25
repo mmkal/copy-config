@@ -107,6 +107,10 @@ To disable checking completely you can set the command to empty string:
 npx copy-config --repo someuser/somerepo --diff-check ""
 ```
 
+### `--dry-run`
+
+Don't modify the filesystem, just log the the writes/deletes that would be performed. Note that this does still create some temporary files on your filesystem.
+
 ### `--help`
 
 Show help text.
