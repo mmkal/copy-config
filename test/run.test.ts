@@ -1,6 +1,5 @@
 import {jestFixture} from 'fs-syncer'
 import {defaultConfig} from '../src'
-import {fairlySensiblePackageJson} from '../src/merge'
 import {run, runWithArgs} from '../src/run'
 
 test('run', async () => {
@@ -131,8 +130,6 @@ test('run', async () => {
         "test": "jest"
       },
       "devDependencies": {
-        "typescript": "4.8.2",
-        "np": "7.6.2",
         "@babel/types": "7.12.11",
         "@types/babel__generator": "7.6.2",
         "@types/babel__traverse": "7.11.0",
@@ -141,8 +138,10 @@ test('run', async () => {
         "eslint": "8.23.0",
         "eslint-plugin-mmkal": "0.0.1-2",
         "jest": "28.1.3",
+        "np": "7.6.2",
         "ts-jest": "28.0.8",
-        "ts-node": "9.1.1"
+        "ts-node": "9.1.1",
+        "typescript": "4.8.2"
       }
     }
     ",
