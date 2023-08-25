@@ -80,7 +80,9 @@ export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSO
   // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
   const localRepoGitRemote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
 
-  const devDepSubstrings = Object.values(variablesStorage.getStore()!.copyableDevDeps)
+  const variables = variablesStorage.getStore()!
+  const devDepSubstrings = Object.values(variables.copyableDevDeps)
+  const depSubstrings = Object.values(variables.copyableDependencies)
 
   const trimmedDownRemote = {
     name: path.parse(meta.localCwd).name,
@@ -101,10 +103,23 @@ export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSO
         url: (localRepoGitRemote + '.git').replace(/\.git\.git$/, '.git'),
       },
     }),
+    dependencies: lodash.pick(remoteJson.dependencies || {}, [
+      ...Object.keys(remoteJson.dependencies || {}).filter(k =>
+        depSubstrings.some(substring => substring && k.includes(substring)),
+      ),
+    ]),
     devDependencies: lodash.pick(remoteDevDeps, [
       ...Object.keys(remoteDevDeps).filter(k => devDepSubstrings.some(substring => substring && k.includes(substring))),
     ]),
   } as PackageJson
+
+  if (Object.keys(trimmedDownRemote.dependencies || {}).length === 0) {
+    delete trimmedDownRemote.dependencies
+  }
+
+  if (Object.keys(trimmedDownRemote.devDependencies || {}).length === 0) {
+    delete trimmedDownRemote.devDependencies
+  }
 
   return lodash.defaultsDeep(localJson, trimmedDownRemote)
 })

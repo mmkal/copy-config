@@ -2,6 +2,7 @@ import {AsyncLocalStorage} from 'async_hooks'
 
 /** These variables can be overriden in configs to change the behaviour of the copy job. */
 export const defaultVariables = {
+  copyableDependencies: {} as Record<string, string>,
   copyableDevDeps: Object.fromEntries(
     [
       'jest',
