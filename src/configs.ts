@@ -8,7 +8,13 @@ export const defaultConfig: Config = {
   rules: [
     {
       pattern: '{.,.vscode,.devcontainer,config}/*.json',
+      ignore: ['package-lock.json'],
       merge: mergeStrategies.jsonRemoteDefaults,
+    },
+    {
+      pattern: '{.,.vscode,.devcontainer,config}/*.{yml,yaml}',
+      ignore: ['**/pnpm-lock.{yaml,yml}'],
+      merge: mergeStrategies.yamlRemoteDefaults,
     },
     {
       pattern: '*.codeworkspace',
@@ -27,7 +33,11 @@ export const defaultConfig: Config = {
       merge: mergeStrategies.preferLocal,
     },
     {
-      pattern: '.github/**/*.{yml,yaml,md}',
+      pattern: '.github/**/*.{yml,yaml}',
+      merge: mergeStrategies.yamlRemoteDefaults,
+    },
+    {
+      pattern: '.github/**/*.md',
       merge: mergeStrategies.preferLocal,
     },
     {
@@ -39,6 +49,7 @@ export const defaultConfig: Config = {
 
 const aggressiveEquivalents: Array<[mergeStrategies.MergeStrategy, mergeStrategies.MergeStrategy]> = [
   [mergeStrategies.jsonRemoteDefaults, mergeStrategies.jsonAggressiveMerge],
+  [mergeStrategies.yamlRemoteDefaults, mergeStrategies.yamlAggressiveMerge],
   [mergeStrategies.concat, mergeStrategies.replace],
   [mergeStrategies.preferLocal, mergeStrategies.replace],
   [mergeStrategies.fairlySensiblePackageJson, mergeStrategies.aggressivePackageJson],

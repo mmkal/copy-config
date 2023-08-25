@@ -1,4 +1,5 @@
 import * as cp from 'child_process'
+import * as jsYaml from 'js-yaml'
 import * as lodash from 'lodash'
 import * as os from 'os'
 import * as path from 'path'
@@ -13,24 +14,40 @@ type Meta = {
 
 export type MergeStrategy = (params: {remoteContent: string; localContent: string | undefined; meta: Meta}) => string
 
-const jsonMergeStrategy = <T = any>(
+type Formatter = Pick<typeof JSON, 'parse' | 'stringify'>
+
+const YAML: Formatter = {
+  parse: str => jsYaml.load(str),
+  stringify: obj => jsYaml.dump(obj),
+}
+
+const formatterMergeStrategy = <T = any>(
+  formatter: Formatter,
   fn: (params: {remoteJson: T; localJson: T; meta: Meta}) => T,
 ): MergeStrategy & {jsonMergeStrategy: typeof fn} => {
   const mergeStrategy: MergeStrategy = ({remoteContent, localContent, meta}) => {
-    const remoteJson = JSON.parse(remoteContent)
-    const localJson = JSON.parse(localContent || '{}')
+    const remoteJson = formatter.parse(remoteContent)
+    const localJson = formatter.parse(localContent || '{}')
     const updated = fn({remoteJson, localJson, meta})
-    return JSON.stringify(updated, null, 2) + os.EOL
+    return formatter.stringify(updated, null, 2) + os.EOL
   }
 
   return Object.assign(mergeStrategy, {jsonMergeStrategy: fn})
 }
 
-export const jsonRemoteDefaults = jsonMergeStrategy(({remoteJson, localJson}) => {
+export const jsonRemoteDefaults = formatterMergeStrategy(JSON, ({remoteJson, localJson}) => {
   return lodash.defaultsDeep(localJson, remoteJson)
 })
 
-export const jsonAggressiveMerge = jsonMergeStrategy(({remoteJson, localJson}) => {
+export const jsonAggressiveMerge = formatterMergeStrategy(JSON, ({remoteJson, localJson}) => {
+  return lodash.merge({}, localJson, remoteJson)
+})
+
+export const yamlRemoteDefaults = formatterMergeStrategy(YAML, ({remoteJson, localJson}) => {
+  return lodash.defaultsDeep(localJson, remoteJson)
+})
+
+export const yamlAggressiveMerge = formatterMergeStrategy(JSON, ({remoteJson, localJson}) => {
   return lodash.merge({}, localJson, remoteJson)
 })
 
@@ -57,7 +74,7 @@ export const preferLocal: MergeStrategy = ({remoteContent, localContent}) => loc
  * - Defines a default project name of the local working directory
  * - Defines a default project version of 0.0.0
  */
-export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
+export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSON, ({remoteJson, localJson, meta}) => {
   const remoteDevDeps = remoteJson.devDependencies || {}
 
   // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
@@ -92,7 +109,7 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
   return lodash.defaultsDeep(localJson, trimmedDownRemote)
 })
 
-export const aggressivePackageJson = jsonMergeStrategy<PackageJson>(({remoteJson, localJson, meta}) => {
+export const aggressivePackageJson = formatterMergeStrategy<PackageJson>(JSON, ({remoteJson, localJson, meta}) => {
   const {name, version, remotePkg} = fairlySensiblePackageJson.jsonMergeStrategy({
     remoteJson,
     localJson: {} as PackageJson, // initialize with empty

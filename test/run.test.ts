@@ -49,12 +49,13 @@ test('run', async () => {
       ".github": {
         "workflows": {
           "ci.yml": "name: CI
-    on:
+    'on':
       push:
-        branches: [main]
+        branches:
+          - main
       pull_request:
-        branches: [main]
-
+        branches:
+          - main
     jobs:
       test:
         runs-on: ubuntu-latest
@@ -68,11 +69,16 @@ test('run', async () => {
           - uses: actions/github-script@v6
             id: coveragejson
             with:
-              script: |
+              script: >
                 const fs = require('fs')
-                const summary = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json').toString())
+
+                const summary =
+                JSON.parse(fs.readFileSync('./coverage/coverage-summary.json').toString())
+
                 const {pct} = summary.total.branches
+
                 const colors = {'00EE00': 98, '9b9b5f': 95, 'FFFF33': 90}
+
                 return {
                   pct,
                   color: Object.entries(colors).find(e => pct >= e[1])[0] || 'FF0000',
@@ -83,9 +89,10 @@ test('run', async () => {
             with:
               NAME: coverage
               LABEL: coverage
-              STATUS: '\${{ fromJson(steps.coveragejson.outputs.result).pct }}%'
+              STATUS: \${{ fromJson(steps.coveragejson.outputs.result).pct }}%
               COLOR: \${{ fromJson(steps.coveragejson.outputs.result).color }}
               GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+
     ",
         },
       },
@@ -195,7 +202,7 @@ test('run', async () => {
         "writing package.json after matching pattern ./package.json",
       ],
       [
-        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml,md}",
+        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
       ],
       [
         "writing jest.config.js after matching pattern ./*.{js,cjs,ts,mjs}",
@@ -425,9 +432,9 @@ test('help', async () => {
 
     --config String
       Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
-  
+      
       You can also use the special placeholder variable \`%source%\` to require a file relative to the project you're copying from. For example:
-  
+      
       \`\`\`bash
       npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
       \`\`\`
@@ -440,28 +447,28 @@ test('help', async () => {
 
     --aggressive 
       (_experimental, will probably be changed to \`--strategy aggressive\`_)
-  
+      
       Instead of the default merge strategies, use more aggressive equivalents. Merge json files, biasing to the remote content instead of local, and replace other files using the remote content directly. Like \`--purge\`, this is a potentially destructive command since it doesn't respect your local filesystem, so use carefully.
-  
+      
       >Future: This will probably become a \`--strategy\` option, to allow for \`--strategy aggressive-if-remote-newer\` or some such. That would do a \`git blame\` on each file, and aggressively update from the remote if the remote file was more recently updated, maybe.
 
     --diff-check String
       A command which will make sure there are no working-copy changes in the current repo. This will run before modifying your file system to avoid making changes that get mixed up with yours. This defaults to \`git diff --exit-code\`.
-  
+      
       You could set to something more fine-grained:
-  
+      
       \`\`\`bash
       npx copy-config --repo someuser/somerepo --diff-check "git diff path/to/configs --exit-code"
       \`\`\`
-  
+      
       Or something else completely:
-  
+      
       \`\`\`bash
       npx copy-config --repo someuser/somerepo --diff-check "npm run somescript"
       \`\`\`
-  
+      
       To disable checking completely you can set the command to empty string:
-  
+      
       \`\`\`bash
       npx copy-config --repo someuser/somerepo --diff-check ""
       \`\`\`"

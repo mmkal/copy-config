@@ -3,6 +3,7 @@ import type {Variables} from './variables'
 
 export interface Rule {
   pattern: string
+  ignore?: string | string[]
   merge: mergeStrategies.MergeStrategy
 }
 
