@@ -3,6 +3,7 @@ import * as lodash from 'lodash'
 import * as os from 'os'
 import * as path from 'path'
 import type {PackageJson} from 'type-fest'
+import {variablesStorage} from './variables'
 
 type Meta = {
   filepath: string
@@ -62,21 +63,7 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
   // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
   const localRepoGitRemote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
 
-  const devDepSubstrings = [
-    'jest',
-    'ava',
-    'mocha',
-    'playwright',
-    'eslint',
-    'prettier',
-    'webpack',
-    'rollup',
-    'swc',
-    'esbuild',
-    'babel',
-    'parcel',
-    'ts-node',
-  ]
+  const devDepSubstrings = Object.values(variablesStorage.getStore()!.copyableDevDeps)
 
   const trimmedDownRemote = {
     name: path.parse(meta.localCwd).name,
@@ -98,9 +85,7 @@ export const fairlySensiblePackageJson = jsonMergeStrategy<PackageJson>(({remote
       },
     }),
     devDependencies: lodash.pick(remoteDevDeps, [
-      'typescript',
-      'np',
-      ...Object.keys(remoteDevDeps).filter(k => devDepSubstrings.some(substring => k.includes(substring))),
+      ...Object.keys(remoteDevDeps).filter(k => devDepSubstrings.some(substring => substring && k.includes(substring))),
     ]),
   } as PackageJson
 

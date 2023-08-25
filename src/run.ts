@@ -8,6 +8,7 @@ import {intersection} from 'lodash'
 import * as path from 'path'
 import {aggressiveConfig, defaultConfig} from './configs'
 import type {Config} from './types'
+import {variablesStorage} from './variables'
 
 type Logger = Pick<Console, 'info'>
 
@@ -16,21 +17,43 @@ export const run = async ({
   cwd = process.cwd(),
   argv = process.argv.slice(2),
   logger = console as Logger,
-} = {}) => {
-  const argSpec = {
-    '--help': Boolean,
-    '--repo': String,
-    '--ref': String,
-    '--path': String,
-    '--output': String,
-    '--config': String,
-    '--filter': String,
-    '--purge': Boolean,
-    '--aggressive': Boolean,
-  } satisfies arg.Spec
+} = {}) => runWithArgs({fs, cwd, args: parseArgv(argv), logger})
 
-  const args = arg(argSpec, {argv})
+const argSpec = {
+  '--help': Boolean,
+  '--repo': String,
+  '--ref': String,
+  '--path': String,
+  '--output': String,
+  '--config': String,
+  '--filter': String,
+  '--purge': Boolean,
+  '--aggressive': Boolean,
+} satisfies arg.Spec
 
+const parseArgv = (argv = process.argv.slice(2)) => {
+  const {_, '--config': config, ...args} = arg(argSpec, {argv})
+
+  return {
+    ...args,
+    config(source: string): Config {
+      if (config) {
+        // eslint-disable-next-line mmkal/@typescript-eslint/no-var-requires, mmkal/@typescript-eslint/no-require-imports
+        const required = require(config.replace('%source%', source))
+        return required.default || required.config || required
+      }
+
+      return args['--aggressive'] ? aggressiveConfig : defaultConfig
+    },
+  }
+}
+
+export const runWithArgs = async ({
+  fs = realFs,
+  cwd = process.cwd(),
+  args = parseArgv(process.argv.slice(2)),
+  logger = console as Logger,
+}) => {
   if (args['--help']) {
     // crappy markdown parser!
     const readme = realFs.readFileSync(path.join(__dirname, '../README.md')).toString()
@@ -79,20 +102,15 @@ export const run = async ({
     cp.execSync(`git -c advice.detachedHead=false checkout ${args['--ref']}`, {cwd: copyFrom})
   }
 
-  const config: Config = args['--config']
-    ? require(args['--config'].replace('%source%', copyFrom)) // eslint-disable-line mmkal/@typescript-eslint/no-require-imports
-    : args['--aggressive']
-    ? aggressiveConfig
-    : defaultConfig
+  const config: Config = args.config(copyFrom)
   const handled = new Set()
 
   const globSync = (pattern: string, options: GlobOptionsWithFileTypesFalse) =>
     _globSync(pattern, {dot: true, ...options})
 
-  config.rules
-    .slice()
-    .reverse()
-    .forEach(rule => {
+  variablesStorage.run(config.variables, () => {
+    const reversed = config.rules.slice().reverse()
+    reversed.forEach(rule => {
       const files = globSync(rule.pattern, {cwd: copyFrom})
       const filtered = args['--filter'] ? intersection(files, globSync(args['--filter'], {cwd: copyFrom})) : files
       filtered.forEach(relPath => {
@@ -118,6 +136,7 @@ export const run = async ({
         handled.add(absPath)
       })
     })
+  })
 
   if (args['--purge']) {
     if (args['--path']) {

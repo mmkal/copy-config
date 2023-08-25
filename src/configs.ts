@@ -1,8 +1,10 @@
 import * as assert from 'assert'
 import * as mergeStrategies from './merge'
 import type {Config} from './types'
+import {defaultVariables} from './variables'
 
 export const defaultConfig: Config = {
+  variables: defaultVariables,
   rules: [
     {
       pattern: '{.,.vscode,.devcontainer,config}/*.json',
@@ -43,6 +45,7 @@ const aggressiveEquivalents: Array<[mergeStrategies.MergeStrategy, mergeStrategi
 ]
 
 export const makeAggressive = (input: Config): Config => ({
+  variables: input.variables,
   rules: input.rules.map(rule => {
     const pairing = aggressiveEquivalents.find(p => p[0] === rule.merge)
     assert.ok(pairing, `There should be an aggressive equivalent for ${rule.pattern} merge strategy`)

@@ -1,4 +1,5 @@
 import type * as mergeStrategies from './merge'
+import type {Variables} from './variables'
 
 export interface Rule {
   pattern: string
@@ -6,5 +7,6 @@ export interface Rule {
 }
 
 export interface Config {
+  variables: Variables
   rules: readonly Rule[]
 }

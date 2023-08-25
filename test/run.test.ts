@@ -1,5 +1,7 @@
 import {jestFixture} from 'fs-syncer'
-import {run} from '../src/run'
+import {defaultConfig} from '../src'
+import {fairlySensiblePackageJson} from '../src/merge'
+import {run, runWithArgs} from '../src/run'
 
 test('run', async () => {
   const syncer = jestFixture({targetState: {}})
@@ -218,6 +220,68 @@ test('run', async () => {
       ],
       [
         "writing .vscode/settings.json after matching pattern {.,.vscode,.devcontainer,config}/*.json",
+      ],
+    ]
+  `)
+})
+
+test('set variables', async () => {
+  const syncer = jestFixture({targetState: {}})
+  syncer.sync()
+  const log = jest.fn()
+  await runWithArgs({
+    cwd: syncer.baseDir,
+    args: {
+      '--repo': 'mmkal/eslint-plugin-codegen',
+      '--filter': './package.json',
+      '--ref': 'v0.17.0',
+      config: () => ({
+        ...defaultConfig,
+        variables: {
+          copyableDevDeps: {
+            'expect-type': 'expect-type',
+          },
+        },
+      }),
+    },
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchInlineSnapshot(`
+    {
+      "package.json": "{
+      "name": "set-variables",
+      "version": "0.0.0",
+      "main": "dist/index.js",
+      "type": "dist/index.d.ts",
+      "files": [
+        "dist",
+        "*.md"
+      ],
+      "np": {
+        "cleanup": false
+      },
+      "scripts": {
+        "eslint": "eslint --ext '.ts,.js,.md'",
+        "lint": "tsc && eslint .",
+        "build": "tsc -p tsconfig.lib.json",
+        "test": "jest"
+      },
+      "devDependencies": {
+        "expect-type2": "npm:expect-type@0.14.0"
+      }
+    }
+    ",
+    }
+  `)
+
+  expect(log.mock.calls).toMatchInlineSnapshot(`
+    [
+      [
+        "writing package.json after matching pattern ./package.json",
+      ],
+      [
+        "skipping package.json for pattern {.,.vscode,.devcontainer,config}/*.json, already handled",
       ],
     ]
   `)

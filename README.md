@@ -89,17 +89,22 @@ npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
 
 Show help text.
 
-## Merge strategies
+## Configuration
 
-You might use this once, and find it useful. Or, you might want to continually "borrow" someone else's carefully-crafted configuration, every day. If you do use it regularly, you will probably eventually need to customise the merge algorithm. You can do this by creating a config file called, say `copy-config.cjs`:
+You might use this once, and find it useful. Or, you might want to continually "borrow" someone else's carefully-crafted configuration, every day. If you do use it regularly, you might need to customise it somehow.
+
+### Merge strategy
+
+One customization you can apply is the merge algorithm. You can do this by creating a config file called, say `copy-config.cjs`:
 
 ```js
-const copyConfig = require('copy-config')
+const {defaultConfig} = require('copy-config')
 
 /** @type {import('copy-config').Config} */
 module.exports = {
+    ...defaultConfig,
     rules: [
-        ...copyConfig.rules,
+        ...defaultConfig.rules,
         {
             pattern: 'package.json',
             merge: ({localContent, remoteContent}) => {
@@ -108,6 +113,26 @@ module.exports = {
             }
         }
     ]
+}
+```
+
+### Variables
+
+🚧 The structure of the `variables` property is very likely to change somewhat in the near future. Add `// @ts-check` to the top of javascript files to make sure you spot any breaking changes. 🚧
+
+Some of the default merge strategies use variables which can be configured as part of a config as well. For example, `copyableDevDeps` is used by the default `package.json` merge function, to ensure commonly-used tools have their various ancilliary dev dependencies installed too (eslint, prettier, jest, webpack, etc.). If you want to copy more, or fewer, dev dependencies, you can override the `variables` property in the config:
+
+```js
+const {defaultConfig} = require('copy-config')
+
+/** @type {import('copy-config').Config} */
+module.exports = {
+    ...defaultConfig,
+    variables: {
+        copyableDevDeps: {
+            vite: 'vite',
+        },
+    },
 }
 ```
 
