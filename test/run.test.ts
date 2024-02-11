@@ -1,5 +1,13 @@
 import {jestFixture} from 'fs-syncer'
-import {run} from '../src/run'
+import {defaultConfig} from '../src'
+import {run, runWithArgs} from '../src/run'
+
+const testArgs = {
+  '--repo': 'mmkal/eslint-plugin-codegen',
+  '--ref': 'v0.17.0',
+  '--diff-check': '',
+}
+const testArgv = Object.entries(testArgs).flat()
 
 test('run', async () => {
   const syncer = jestFixture({targetState: {}})
@@ -7,7 +15,7 @@ test('run', async () => {
   const log = jest.fn()
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0'],
+    argv: [...testArgv],
     logger: {info: log},
   })
 
@@ -41,12 +49,13 @@ test('run', async () => {
       ".github": {
         "workflows": {
           "ci.yml": "name: CI
-    on:
+    'on':
       push:
-        branches: [main]
+        branches:
+          - main
       pull_request:
-        branches: [main]
-
+        branches:
+          - main
     jobs:
       test:
         runs-on: ubuntu-latest
@@ -60,11 +69,16 @@ test('run', async () => {
           - uses: actions/github-script@v6
             id: coveragejson
             with:
-              script: |
+              script: >
                 const fs = require('fs')
-                const summary = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json').toString())
+
+                const summary =
+                JSON.parse(fs.readFileSync('./coverage/coverage-summary.json').toString())
+
                 const {pct} = summary.total.branches
+
                 const colors = {'00EE00': 98, '9b9b5f': 95, 'FFFF33': 90}
+
                 return {
                   pct,
                   color: Object.entries(colors).find(e => pct >= e[1])[0] || 'FF0000',
@@ -75,9 +89,10 @@ test('run', async () => {
             with:
               NAME: coverage
               LABEL: coverage
-              STATUS: '\${{ fromJson(steps.coveragejson.outputs.result).pct }}%'
+              STATUS: \${{ fromJson(steps.coveragejson.outputs.result).pct }}%
               COLOR: \${{ fromJson(steps.coveragejson.outputs.result).color }}
               GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+
     ",
         },
       },
@@ -129,8 +144,6 @@ test('run', async () => {
         "test": "jest"
       },
       "devDependencies": {
-        "typescript": "4.8.2",
-        "np": "7.6.2",
         "@babel/types": "7.12.11",
         "@types/babel__generator": "7.6.2",
         "@types/babel__traverse": "7.11.0",
@@ -139,8 +152,10 @@ test('run', async () => {
         "eslint": "8.23.0",
         "eslint-plugin-mmkal": "0.0.1-2",
         "jest": "28.1.3",
+        "np": "7.6.2",
         "ts-jest": "28.0.8",
-        "ts-node": "9.1.1"
+        "ts-node": "9.1.1",
+        "typescript": "4.8.2"
       }
     }
     ",
@@ -187,16 +202,16 @@ test('run', async () => {
         "writing package.json after matching pattern ./package.json",
       ],
       [
-        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml,md}",
+        "writing .github/workflows/ci.yml after matching pattern .github/**/*.{yml,yaml}",
       ],
       [
-        "writing jest.config.js after matching pattern ./*.{js,cjs,ts}",
+        "writing jest.config.js after matching pattern ./*.{js,cjs,ts,mjs}",
       ],
       [
-        "writing .prettierrc.js after matching pattern ./*.{js,cjs,ts}",
+        "writing .prettierrc.js after matching pattern ./*.{js,cjs,ts,mjs}",
       ],
       [
-        "writing .eslintrc.cjs after matching pattern ./*.{js,cjs,ts}",
+        "writing .eslintrc.cjs after matching pattern ./*.{js,cjs,ts,mjs}",
       ],
       [
         "skipping .prettierrc.js for pattern ./.*.{js,cjs}, already handled",
@@ -223,6 +238,68 @@ test('run', async () => {
   `)
 })
 
+test('set variables', async () => {
+  const syncer = jestFixture({targetState: {}})
+  syncer.sync()
+  const log = jest.fn()
+  await runWithArgs({
+    cwd: syncer.baseDir,
+    args: {
+      ...testArgs,
+      '--filter': './package.json',
+      config: () => ({
+        ...defaultConfig,
+        variables: {
+          ...defaultConfig.variables,
+          copyableDevDeps: {
+            'expect-type': 'expect-type',
+          },
+        },
+      }),
+    },
+    logger: {info: log},
+  })
+
+  expect(syncer.read()).toMatchInlineSnapshot(`
+    {
+      "package.json": "{
+      "name": "set-variables",
+      "version": "0.0.0",
+      "main": "dist/index.js",
+      "type": "dist/index.d.ts",
+      "files": [
+        "dist",
+        "*.md"
+      ],
+      "np": {
+        "cleanup": false
+      },
+      "scripts": {
+        "eslint": "eslint --ext '.ts,.js,.md'",
+        "lint": "tsc && eslint .",
+        "build": "tsc -p tsconfig.lib.json",
+        "test": "jest"
+      },
+      "devDependencies": {
+        "expect-type2": "npm:expect-type@0.14.0"
+      }
+    }
+    ",
+    }
+  `)
+
+  expect(log.mock.calls).toMatchInlineSnapshot(`
+    [
+      [
+        "writing package.json after matching pattern ./package.json",
+      ],
+      [
+        "skipping package.json for pattern {.,.vscode,.devcontainer,config}/*.json, already handled",
+      ],
+    ]
+  `)
+})
+
 test('filter', async () => {
   const syncer = jestFixture({targetState: {}})
   syncer.sync()
@@ -230,7 +307,7 @@ test('filter', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json'],
+    argv: [...testArgv, '--filter', './tsconfig*.json'],
     logger: {info: log},
   })
 
@@ -254,7 +331,7 @@ test('purge', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--purge'],
+    argv: [...testArgv, '--purge'],
     logger: {info: log},
   })
 
@@ -284,7 +361,7 @@ test('purge + filter', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig*.json', '--purge'],
+    argv: [...testArgv, '--filter', './tsconfig*.json', '--purge'],
     logger: {info: log},
   })
 
@@ -308,7 +385,7 @@ test('aggressive', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig.json'],
+    argv: [...testArgv, '--filter', './tsconfig.json'],
     logger: {info: log},
   })
 
@@ -318,13 +395,88 @@ test('aggressive', async () => {
 
   await run({
     cwd: syncer.baseDir,
-    argv: ['--repo', 'mmkal/eslint-plugin-codegen', '--ref', 'v0.17.0', '--filter', './tsconfig.json', '--aggressive'],
+    argv: [...testArgv, '--filter', './tsconfig.json', '--aggressive'],
     logger: {info: log},
   })
 
   expect(syncer.read()).toMatchObject({
     'tsconfig.json': expect.stringContaining('"target": "es2017"'),
   })
+})
+
+test('help', async () => {
+  const log = jest.fn()
+
+  await run({
+    cwd: process.cwd(),
+    argv: ['--help'],
+    logger: {info: log},
+  })
+
+  expect(log.mock.calls[0][0]).toMatchInlineSnapshot(`
+    "Available options:
+
+    --help 
+      Show help text.
+
+    --repo String
+      A remote repo to clone and scan for config files. This will be passed straight to \`git clone\` in a sub-shell, so should work with \`https:\` or \`ssh:\`, or any other protocol that works with \`git clone\` for you.
+
+    --ref String
+      A sha, tag, or branch to checkout on the remote repo before scanning for files. Using this can ensure you _don't_ get updated files when the remote repo pushes changes - use when you want stability rather than to be on the bleeding edge.
+
+    --path String
+      If not specifying \`--repo\`, this must be used to specify a path to a directory containing a project to copy config files from. For example, you could create a new project based on an existing one in a monorepo.
+
+    --output String
+      Directory to copy files into.
+
+    --config String
+      Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
+
+      You can also use the special placeholder variable \`%source%\` to require a file relative to the project you're copying from. For example:
+
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
+      \`\`\`
+
+    --filter String
+      If you only want to copy over certain kinds of file, you can use \`--filter\` to narrow down the files that will be matched in the remote repo. For example, \`npx copy-config --repo mmkal/expect-type --filter '*.json'\` will only copy JSON files.
+
+    --purge 
+      Use this to remove all config files found locally that aren't found on the remote. This is a destructive option, so use it carefully.
+
+    --aggressive 
+      (_experimental, will probably be changed to \`--strategy aggressive\`_)
+
+      Instead of the default merge strategies, use more aggressive equivalents. Merge json files, biasing to the remote content instead of local, and replace other files using the remote content directly. Like \`--purge\`, this is a potentially destructive command since it doesn't respect your local filesystem, so use carefully.
+
+      >Future: This will probably become a \`--strategy\` option, to allow for \`--strategy aggressive-if-remote-newer\` or some such. That would do a \`git blame\` on each file, and aggressively update from the remote if the remote file was more recently updated, maybe.
+
+    --diff-check String
+      A command which will make sure there are no working-copy changes in the current repo. This will run before modifying your file system to avoid making changes that get mixed up with yours. This defaults to \`git diff --exit-code\`.
+
+      You could set to something more fine-grained:
+
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --diff-check "git diff path/to/configs --exit-code"
+      \`\`\`
+
+      Or something else completely:
+
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --diff-check "npm run somescript"
+      \`\`\`
+
+      To disable checking completely you can set the command to empty string:
+
+      \`\`\`bash
+      npx copy-config --repo someuser/somerepo --diff-check ""
+      \`\`\`
+
+    --dry-run 
+      Don't modify the filesystem, just log the the writes/deletes that would be performed. Note that this does still create some temporary files on your filesystem."
+  `)
 })
 
 test('local source with output path', async () => {
@@ -343,7 +495,7 @@ test('local source with output path', async () => {
 
   await run({
     cwd: syncer.baseDir + '/sourcedir',
-    argv: ['--path', '.', '--output', '../targetdir'],
+    argv: ['--path', '.', '--diff-check', '', '--output', '../targetdir'],
   })
 
   expect(syncer.read()).toMatchInlineSnapshot(`

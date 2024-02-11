@@ -1,20 +1,20 @@
 import * as assert from 'assert'
 import * as mergeStrategies from './merge'
-
-export interface Rule {
-  pattern: string
-  merge: mergeStrategies.MergeStrategy
-}
-
-export interface Config {
-  rules: readonly Rule[]
-}
+import type {Config} from './types'
+import {defaultVariables} from './variables'
 
 export const defaultConfig: Config = {
+  variables: defaultVariables,
   rules: [
     {
       pattern: '{.,.vscode,.devcontainer,config}/*.json',
+      ignore: ['package-lock.json'],
       merge: mergeStrategies.jsonRemoteDefaults,
+    },
+    {
+      pattern: '{.,.vscode,.devcontainer,config}/*.{yml,yaml}',
+      ignore: ['**/pnpm-lock.{yaml,yml}'],
+      merge: mergeStrategies.yamlRemoteDefaults,
     },
     {
       pattern: '*.codeworkspace',
@@ -29,11 +29,15 @@ export const defaultConfig: Config = {
       merge: mergeStrategies.preferLocal,
     },
     {
-      pattern: './*.{js,cjs,ts}',
+      pattern: './*.{js,cjs,ts,mjs}',
       merge: mergeStrategies.preferLocal,
     },
     {
-      pattern: '.github/**/*.{yml,yaml,md}',
+      pattern: '.github/**/*.{yml,yaml}',
+      merge: mergeStrategies.yamlRemoteDefaults,
+    },
+    {
+      pattern: '.github/**/*.md',
       merge: mergeStrategies.preferLocal,
     },
     {
@@ -45,15 +49,19 @@ export const defaultConfig: Config = {
 
 const aggressiveEquivalents: Array<[mergeStrategies.MergeStrategy, mergeStrategies.MergeStrategy]> = [
   [mergeStrategies.jsonRemoteDefaults, mergeStrategies.jsonAggressiveMerge],
+  [mergeStrategies.yamlRemoteDefaults, mergeStrategies.yamlAggressiveMerge],
   [mergeStrategies.concat, mergeStrategies.replace],
   [mergeStrategies.preferLocal, mergeStrategies.replace],
   [mergeStrategies.fairlySensiblePackageJson, mergeStrategies.aggressivePackageJson],
 ]
 
-export const aggressiveConfig: Config = {
-  rules: defaultConfig.rules.map(rule => {
+export const makeAggressive = (input: Config): Config => ({
+  variables: input.variables,
+  rules: input.rules.map(rule => {
     const pairing = aggressiveEquivalents.find(p => p[0] === rule.merge)
     assert.ok(pairing, `There should be an aggressive equivalent for ${rule.pattern} merge strategy`)
     return {pattern: rule.pattern, merge: pairing[1]}
   }),
-}
+})
+
+export const aggressiveConfig: Config = makeAggressive(defaultConfig)

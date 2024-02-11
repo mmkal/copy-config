@@ -1,4 +1,5 @@
 export type {MergeStrategy} from './merge'
 export * as mergeStrategies from './merge'
-export * from './config'
-export * from './run'
+export * from './configs'
+export {defaultVariables, type Variables} from './variables'
+export * from './types'

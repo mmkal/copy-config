@@ -79,17 +79,58 @@ Instead of the default merge strategies, use more aggressive equivalents. Merge 
 
 Use to point to a (relative path to) a JS config file, which defines a custom configuration for the tool. The configuration is used to define custom merge strategies, which can change how files are generated. See [merge strategies](#merge-strategies) for more details.
 
-## Merge strategies
+You can also use the special placeholder variable `%source%` to require a file relative to the project you're copying from. For example:
 
-You might use this once, and find it useful. Or, you might want to continually "borrow" someone else's carefully-crafted configuration, every day. If you do use it regularly, you will probably eventually need to customise the merge algorithm. You can do this by creating a config file called, say `copy-config.cjs`:
+```bash
+npx copy-config --repo someuser/somerepo --config %source%/configs/someconfig.js
+```
+
+### `--diff-check`
+
+A command which will make sure there are no working-copy changes in the current repo. This will run before modifying your file system to avoid making changes that get mixed up with yours. This defaults to `git diff --exit-code`.
+
+You could set to something more fine-grained:
+
+```bash
+npx copy-config --repo someuser/somerepo --diff-check "git diff path/to/configs --exit-code"
+```
+
+Or something else completely:
+
+```bash
+npx copy-config --repo someuser/somerepo --diff-check "npm run somescript"
+```
+
+To disable checking completely you can set the command to empty string:
+
+```bash
+npx copy-config --repo someuser/somerepo --diff-check ""
+```
+
+### `--dry-run`
+
+Don't modify the filesystem, just log the the writes/deletes that would be performed. Note that this does still create some temporary files on your filesystem.
+
+### `--help`
+
+Show help text.
+
+## Configuration
+
+You might use this once, and find it useful. Or, you might want to continually "borrow" someone else's carefully-crafted configuration, every day. If you do use it regularly, you might need to customise it somehow.
+
+### Merge strategy
+
+One customization you can apply is the merge algorithm. You can do this by creating a config file called, say `copy-config.cjs`:
 
 ```js
-const copyConfig = require('copy-config')
+const {defaultConfig} = require('copy-config')
 
 /** @type {import('copy-config').Config} */
 module.exports = {
+    ...defaultConfig,
     rules: [
-        ...copyConfig.rules,
+        ...defaultConfig.rules,
         {
             pattern: 'package.json',
             merge: ({localContent, remoteContent}) => {
@@ -98,6 +139,26 @@ module.exports = {
             }
         }
     ]
+}
+```
+
+### Variables
+
+🚧 The structure of the `variables` property is very likely to change somewhat in the near future. Add `// @ts-check` to the top of javascript files to make sure you spot any breaking changes. 🚧
+
+Some of the default merge strategies use variables which can be configured as part of a config as well. For example, `copyableDevDeps` is used by the default `package.json` merge function, to ensure commonly-used tools have their various ancilliary dev dependencies installed too (eslint, prettier, jest, webpack, etc.). If you want to copy more, or fewer, dev dependencies, you can override the `variables` property in the config:
+
+```js
+const {defaultConfig} = require('copy-config')
+
+/** @type {import('copy-config').Config} */
+module.exports = {
+    ...defaultConfig,
+    variables: {
+        copyableDevDeps: {
+            vite: 'vite',
+        },
+    },
 }
 ```
 
