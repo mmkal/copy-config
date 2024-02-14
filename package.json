@@ -2,6 +2,7 @@
   "name": "copy-config",
   "version": "0.3.0-2",
   "description": "Copies another repo's configuration",
+  "packageManager": "pnpm@8.10.2",
   "main": "dist/index.js",
   "bin": "dist/bin.js",
   "homepage": "https://github.com/mmkal/copy-config",
