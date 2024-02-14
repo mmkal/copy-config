@@ -1,3 +1,4 @@
+import {test, expect} from 'vitest'
 import {jsonAggressiveMerge, jsonRemoteDefaults} from '../src/merge'
 
 test('remote defaults', () => {

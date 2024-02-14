@@ -1,6 +1,9 @@
+import {test, expect, vi as jest} from 'vitest'
 import {jestFixture} from 'fs-syncer'
 import {defaultConfig} from '../src'
 import {run, runWithArgs} from '../src/run'
+
+Object.assign(global, {expect})
 
 const testArgs = {
   '--repo': 'mmkal/eslint-plugin-codegen',
@@ -126,7 +129,7 @@ test('run', async () => {
     }
     ",
       "package.json": "{
-      "name": "run",
+      "name": "test-run-test-ts-run",
       "version": "0.0.0",
       "main": "dist/index.js",
       "type": "dist/index.d.ts",
@@ -263,7 +266,7 @@ test('set variables', async () => {
   expect(syncer.read()).toMatchInlineSnapshot(`
     {
       "package.json": "{
-      "name": "set-variables",
+      "name": "test-run-test-ts-set-variables",
       "version": "0.0.0",
       "main": "dist/index.js",
       "type": "dist/index.d.ts",
