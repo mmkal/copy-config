@@ -1,6 +1,6 @@
 import arg from 'arg'
 import * as assert from 'assert'
-import * as cp from 'child_process'
+import {execaCommand, execaSync} from 'execa'
 import * as realFs from 'fs'
 import {globSync as _globSync} from 'glob'
 import type {GlobOptionsWithFileTypesFalse} from 'glob/dist/cjs'
@@ -100,7 +100,7 @@ export const runWithArgs = async ({
 
   try {
     if (diffCheckCommand && !args['--dry-run']) {
-      cp.execSync(diffCheckCommand, {stdio: 'inherit'})
+      await execaCommand(diffCheckCommand)
     }
   } catch (error: unknown) {
     const msg = `Diff check command "${diffCheckCommand}" failed. To resolve this you can stage your working changes before rerunning, or override the command, e.g. \`--diff-check ""\``
@@ -116,7 +116,7 @@ export const runWithArgs = async ({
     const tmpParent = '/tmp/copy-config/' + repo.split('://')[1]
     fs.mkdirSync(tmpParent, {recursive: true})
     const tempDir = fs.mkdtempSync(tmpParent + '/')
-    cp.execSync(`git clone ${repo}`, {cwd: tempDir})
+    execaSync('git', ['clone', repo], {cwd: tempDir})
     const tempRepoDir = path.join(tempDir, fs.readdirSync(tempDir)[0])
     return path.join(tempRepoDir, args['--path'] || '.')
   }
@@ -130,8 +130,8 @@ export const runWithArgs = async ({
   const copyFrom = args['--repo'] ? getTempRepoDir() : getLocalDir()
 
   if (args['--ref']) {
-    cp.execSync(`git fetch`, {cwd: copyFrom})
-    cp.execSync(`git -c advice.detachedHead=false checkout ${args['--ref']}`, {cwd: copyFrom})
+    execaSync('git', ['fetch'], {cwd: copyFrom})
+    execaSync('git', ['-c', 'advice.detachedHead=false', 'checkout', args['--ref']], {cwd: copyFrom})
   }
 
   const config: Config = args.config(copyFrom)
