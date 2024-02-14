@@ -1,4 +1,4 @@
-import * as cp from 'child_process'
+import {execaSync} from 'execa'
 import * as jsYaml from 'js-yaml'
 import * as lodash from 'lodash'
 import * as os from 'os'
@@ -78,7 +78,7 @@ export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSO
   const remoteDevDeps = remoteJson.devDependencies || {}
 
   // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
-  const localRepoGitRemote = cp.execSync('git remote -v', {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
+  const localRepoGitRemote = execaSync('git', ['remote', '-v'], {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
 
   const variables = variablesStorage.getStore()!
   const devDepSubstrings = Object.values(variables.copyableDevDeps)
