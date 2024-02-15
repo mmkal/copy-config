@@ -1,4 +1,4 @@
-import {execaSync} from 'execa'
+import {execaSync} from '@rebundled/execa'
 import * as jsYaml from 'js-yaml'
 import * as lodash from 'lodash'
 import * as os from 'os'
@@ -78,7 +78,7 @@ export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSO
   const remoteDevDeps = remoteJson.devDependencies || {}
 
   // this is an (unavoidably?) confusing name. This is the name of the *git* remote for the local repo, nothing to do with the remote repo
-  const localRepoGitRemote = execaSync('git', ['remote', '-v'], {cwd: meta.localCwd}).toString().split(/\w+/g)[1]
+  const localRepoGitRemote = execaSync('git', ['remote', '-v'], {cwd: meta.localCwd}).stdout.split(/\w+/g)[1]
 
   const variables = variablesStorage.getStore()!
   const devDepSubstrings = Object.values(variables.copyableDevDeps)
@@ -95,7 +95,7 @@ export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSO
     files: remoteJson.files,
     author: remoteJson.author,
     np: remoteJson.np,
-    scripts: lodash.pickBy(remoteJson.scripts, script => !script?.startsWith('_')),
+    scripts: lodash.pickBy(remoteJson.scripts, (_script, name) => /^[\w-]+$/.exec(name)),
     ...(localRepoGitRemote.startsWith('https://') && {
       homepage: localRepoGitRemote.startsWith('https://') ? `${localRepoGitRemote}#readme` : undefined,
       repository: {
@@ -103,14 +103,16 @@ export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSO
         url: (localRepoGitRemote + '.git').replace(/\.git\.git$/, '.git'),
       },
     }),
-    dependencies: lodash.pick(remoteJson.dependencies || {}, [
-      ...Object.keys(remoteJson.dependencies || {}).filter(k =>
+    dependencies: lodash.pick(
+      remoteJson.dependencies || {},
+      Object.keys(remoteJson.dependencies || {}).filter(k =>
         depSubstrings.some(substring => substring && k.includes(substring)),
       ),
-    ]),
-    devDependencies: lodash.pick(remoteDevDeps, [
-      ...Object.keys(remoteDevDeps).filter(k => devDepSubstrings.some(substring => substring && k.includes(substring))),
-    ]),
+    ),
+    devDependencies: lodash.pick(
+      remoteDevDeps,
+      Object.keys(remoteDevDeps).filter(k => devDepSubstrings.some(substring => substring && k.includes(substring))),
+    ),
   } as PackageJson
 
   if (Object.keys(trimmedDownRemote.dependencies || {}).length === 0) {
