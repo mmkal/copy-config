@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@rebundled/execa':
-    specifier: 8.0.2-next.1
-    version: 8.0.2-next.1
+    specifier: 8.0.2-next.2
+    version: 8.0.2-next.2
   arg:
     specifier: ^5.0.2
     version: 5.0.2
@@ -725,8 +725,8 @@ packages:
       config-chain: 1.1.13
     dev: true
 
-  /@rebundled/execa@8.0.2-next.1:
-    resolution: {integrity: sha512-6/kkrv8DLXfQs4RkxpDKFmnWh8+aQJK8jZMvGu0CHIL+G50DulzobPe4Uzfl+l7sWNRmsf5DduK2Za7Hu3rs7g==}
+  /@rebundled/execa@8.0.2-next.2:
+    resolution: {integrity: sha512-S3rd39mObqtVaXqShfiSiYf4F1pUjSXyONfk+VRvsrQt2i1pFTZZIEm7yGyplzPcWefY8/dA/XSivCMVkMGMHQ==}
     engines: {node: '>=18'}
     dependencies:
       '@sindresorhus/merge-streams': 2.2.1
