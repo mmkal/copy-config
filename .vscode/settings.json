@@ -4,7 +4,8 @@
   },
   "eslint.validate": [
     "javascript",
-    "typescript"
+    "typescript",
+    "markdown"
   ],
   "eslint.rules.customizations": [
     {

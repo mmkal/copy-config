@@ -95,7 +95,7 @@ export const fairlySensiblePackageJson = formatterMergeStrategy<PackageJson>(JSO
     files: remoteJson.files,
     author: remoteJson.author,
     np: remoteJson.np,
-    scripts: lodash.pickBy(remoteJson.scripts, (_script, name) => /^[\w-]+$/.exec(name)),
+    scripts: lodash.pickBy(remoteJson.scripts, (_script, name) => /^[a-z-]+$/.exec(name)),
     ...(localRepoGitRemote.startsWith('https://') && {
       homepage: localRepoGitRemote.startsWith('https://') ? `${localRepoGitRemote}#readme` : undefined,
       repository: {
