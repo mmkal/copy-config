@@ -36,14 +36,14 @@
   },
   "devDependencies": {
     "@types/eslint": "8.40.0",
-    "@types/js-yaml": "4.0.5",
-    "@types/lodash": "4.14.195",
+    "@types/js-yaml": "4.0.9",
+    "@types/lodash": "4.17.12",
     "@types/node": "^20.11.17",
     "eslint": "^8.56.0",
     "eslint-plugin-mmkal": "0.3.0",
-    "fs-syncer": "0.4.0",
+    "fs-syncer": "0.5.3",
     "np": "github:mmkal/np#pnpm",
-    "typescript": "5.0.4",
+    "typescript": "5.6.3",
     "vitest": "^1.2.2"
   },
   "files": [
